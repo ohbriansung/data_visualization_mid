@@ -11,6 +11,9 @@
   <!-- bulma 0.7.2 and font awesome v5.7.1 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" integrity="sha256-2pUeJf+y0ltRPSbKOeJh09ipQFYxUdct5nTY6GAXswA=" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/toggle.css">
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 </head>
 
 <!-- body -->
@@ -66,23 +69,6 @@
             <span>Gudbrands Visualization</span>
           </a>
         </div>
-
-        <div class="navbar-end">
-          <a class="navbar-item" href="#grade">
-              <span class="icon">
-                <i class="fas fa-tasks"></i>
-              </span>
-            <span>Grade</span>
-          </a>
-
-          <a class="navbar-item" href="#about">
-              <span class="icon">
-                <i class="fas fa-info-circle"></i>
-              </span>
-            <span>About</span>
-          </a>
-        </div>
-
       </nav>
     </div>
   </div>
@@ -90,30 +76,49 @@
 
 <!-- todo: add sections as necessary -->
 <section class="section">
+
+    <label class="switch center">
+      <input type="checkbox">
+      <span class="slider round"></span>
+    </label>
+
+
+
   <div class="container content">
-    <!-- todo: modify as necessary (or move visualizations to separate pages) -->
-    <h2>Visualization 1</h2>
+    <div id="vis">
+      <!-- todo: modify as necessary (or move visualizations to separate pages) -->
+      <h2>Jordan's Visualization</h2>
 
-    <svg width="100%" height="400" style="background-color: whitesmoke; border: 1px solid black;">
-    </svg>
+      <svg width="100%" height="400" style="background-color: whitesmoke; border: 1px solid black;">
+      </svg>
 
-    <h3>Interpretation</h3>
+      <h3>Interpretation</h3>
 
-    <p>
-      If appropriate, provide a brief discussion of how to interpret this visualization (e.g. how the data is encoded) and how to interact with this visualization. Some of this discussion may not be necessary depending on the legends provided with the visualization.
-    </p>
+      <p>
+        If appropriate, provide a brief discussion of how to interpret this visualization (e.g. how the data is encoded) and how to interact with this visualization. Some of this discussion may not be necessary depending on the legends provided with the visualization.
+      </p>
 
-    <h3>Discussion</h3>
+      <h3>Discussion</h3>
 
-    <p>
-      If appropriate, provide a brief discussion of the primary goal and findings of the visualization, any challenges encountered creating the visualization, and any other context as required by the assignment.
-    </p>
+      <p>
+        If appropriate, provide a brief discussion of the primary goal and findings of the visualization, any challenges encountered creating the visualization, and any other context as required by the assignment.
+      </p>
 
-    <h3>Credit</h3>
+      <h3>Credit</h3>
 
-    <p>
-      If appropriate, provide credit for the dataset, any code used, and design inspirations here. Unsufficient discussion here is a violation of the <a href="/syllabus.html#cheating-policy">academic honesty policy</a> and may result in an F grade for the assignment or the <em>entire</em> course.
-    </p>
+      <p>
+        If appropriate, provide credit for the dataset, any code used, and design inspirations here. Unsufficient discussion here is a violation of the <a href="/syllabus.html#cheating-policy">academic honesty policy</a> and may result in an F grade for the assignment or the <em>entire</em> course.
+      </p>
+    </div>
+
+    <div id="proto">
+      <h2>Prototype</h2>
+      <p class="image is-5by4">
+        <!-- todo: replace with your profile image -->
+        <img src="https://bulma.io/images/placeholders/128x128.png">
+      </p>
+    </div>
+
   </div>
 </section>
 
@@ -135,6 +140,23 @@
   </div>
 </footer>
 
-<!-- end body and html -->
+
+
+<script>
+  $(document).ready(function(){
+      $('input[type="checkbox"]').click(function(){
+          if($(this).prop("checked") == true){
+              $('#vis').hide(500, function(){
+                  $('#proto').show(500);
+              });
+          }
+          else if($(this).prop("checked") == false){
+              $('#proto').hide(500, function(){
+                  $('#vis').show(500);
+              });
+          }
+      });
+  });
+</script>
 </body>
 </html>
