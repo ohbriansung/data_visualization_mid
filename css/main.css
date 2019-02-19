@@ -7,3 +7,17 @@
     width: 60%;
     padding: 10px;
 }
+
+.font-centered {
+   align-content: center;
+}
+
+.snip {
+  display: block;
+  margin: auto;
+  width: 80%;
+}
+
+th {
+  text-align: center;
+}
