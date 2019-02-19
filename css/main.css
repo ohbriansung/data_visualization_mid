@@ -1,4 +1,4 @@
-#proto{
+#proto {
     display: none;
 }
 
@@ -18,7 +18,7 @@
   width: 80%;
 }
 
-.prototypes {
+.visualization, .prototypes {
   background-color: white;
   display: block;
   margin: auto;
