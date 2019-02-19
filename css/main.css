@@ -18,6 +18,11 @@
   width: 80%;
 }
 
-th {
-  text-align: center;
+.prototypes {
+  background-color: white;
+  display: block;
+  margin: auto;
+  width: 960px;
+  height: 500px;
+  border: 1px solid black;
 }
