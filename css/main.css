@@ -26,3 +26,7 @@
   height: 500px;
   border: 1px solid black;
 }
+
+.vega-actions a {
+    margin-right: 5px;
+}
