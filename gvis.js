@@ -4,6 +4,7 @@ var proto4 = {
     "height": 500,
     "data": {"url": "data/modified_data.csv"},
     "mark": "bar",
+    "title": "Distribution of Call Type, Month and Neighborhoods",
     "encoding": {
         "x": {
             "timeUnit": "month",
@@ -11,15 +12,14 @@ var proto4 = {
             "type": "ordinal"
         },
         "y": {
-            "aggregate":"count",
+            "aggregate": "count",
             "field": "Call Type Group",
             "type": "quantitative",
         },
-        color:{
-            "field":"Neighborhooods - Analysis Boundaries",
+        "color": {
+            "field": "Neighborhooods - Analysis Boundaries",
             "type": "nominal",
             "legend": {"title": "Neighborhoods"}
         }
-
     }
-}
+};

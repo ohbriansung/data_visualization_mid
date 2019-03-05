@@ -11,19 +11,16 @@ var proto2 = {
             "type": "ordinal"
         },
         "y": {
-            "aggregate":"mean",
+            "aggregate": "mean",
             "field": "Station Area",
             "type": "quantitative"
         },
-        color:{
-            "field":"Unit Type",
+        "color": {
+            "field": "Unit Type",
             "type": "nominal"
         }
-
     }
-
 };
-
 
 var proto4 = {
     "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
@@ -31,6 +28,7 @@ var proto4 = {
     "height": 500,
     "data": {"url": "data/modified_data.csv"},
     "mark": "bar",
+    "title": "Distribution of Call Type, Month and Neighborhoods",
     "encoding": {
         "x": {
             "timeUnit": "month",
@@ -38,15 +36,14 @@ var proto4 = {
             "type": "ordinal"
         },
         "y": {
-            "aggregate":"count",
+            "aggregate": "count",
             "field": "Call Type Group",
             "type": "quantitative",
         },
-        color:{
-            "field":"Neighborhooods - Analysis Boundaries",
+        "color": {
+            "field": "Neighborhooods - Analysis Boundaries",
             "type": "nominal",
             "legend": {"title": "Neighborhoods"}
         }
-
     }
-}
+};

@@ -23,7 +23,6 @@ var proto1 = {
             "legend": {"title": "Call Type Group"}
         }
     }
-
 };
 
 var proto3 = {
@@ -40,16 +39,15 @@ var proto3 = {
             "type": "ordinal"
         },
         "y": {
-            "aggregate":"count",
+            "aggregate": "count",
             "field": "Call Type Group",
-            "type": "quantitative",
+            "type": "quantitative"
         },
-        color:{
-            "field":"Neighborhooods - Analysis Boundaries",
+        "color": {
+            "field": "Neighborhooods - Analysis Boundaries",
             "type": "nominal",
             "legend": {"title": "Neighborhoods"}
         }
-
     }
 };
 
