@@ -46,3 +46,24 @@ var proto2 = {
     }
 
 };
+
+var proto3 = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+    "data": {"url": "data/response_time_per_weekday.csv"},
+    "mark": "bar",
+
+    "encoding": {
+      "x": {
+        "field": "response_time",
+        "aggregate": "mean",
+        "type": "quantitative",
+        "axis": {"title": "Average Response Time (Second)"}
+      },
+      "y": {
+        "field": "weekday",
+        "type": "ordinal",
+        "axis": {"title": "Weekday"},
+        "sort": {"encoding": "x"}
+      }
+    }
+};
