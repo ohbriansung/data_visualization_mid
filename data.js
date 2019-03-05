@@ -49,6 +49,7 @@ var proto2 = {
 
 var proto3 = {
     "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+<<<<<<< HEAD
     "data": {"url": "data/response_time_per_weekday.csv"},
     "mark": "bar",
 
@@ -65,5 +66,53 @@ var proto3 = {
         "axis": {"title": "Weekday"},
         "sort": {"encoding": "x"}
       }
+=======
+    "width": 960,
+    "height": 500,
+    "data": {"url": "data/modified_data.csv"},
+    "mark": "line",
+    "encoding": {
+        "x": {
+            "timeUnit": "month",
+            "field": "Call Date",
+            "type": "ordinal"
+        },
+        "y": {
+            "aggregate":"count",
+            "field": "Call Type Group",
+            "type": "quantitative",
+        },
+        color:{
+            "field":"Neighborhooods - Analysis Boundaries",
+            "type": "nominal",
+        }
+
+    }
+};
+
+
+var proto4 = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+    "width": 960,
+    "height": 500,
+    "data": {"url": "data/modified_data.csv"},
+    "mark": "bar",
+    "encoding": {
+        "x": {
+            "timeUnit": "month",
+            "field": "Call Date",
+            "type": "ordinal"
+        },
+        "y": {
+            "aggregate":"count",
+            "field": "Call Type Group",
+            "type": "quantitative",
+        },
+        color:{
+            "field":"Neighborhooods - Analysis Boundaries",
+            "type": "nominal",
+        }
+
+>>>>>>> 0665c8198e42f27d3942eb1a4e4da8321a7ce3c0
     }
 };
