@@ -18,101 +18,133 @@
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc13/build/vega-lite.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.29.1/build/vega-embed.js"></script>
   <!--<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>-->
-  <script src="data.js"></script>
+  <script src="gvis.js"></script>
 </head>
 
 <!-- body -->
 <body>
 
-<!-- header -->
-<section class="hero is-primary is-bold">
-  <!-- todo: change assignment and name -->
-  <div class="hero-body">
-    <div class="container">
-      <h1 class="title">
-        Visualization Assignment
-      </h1>
-      <h2 class="subtitle">
-        Full Name
-      </h2>
+  <!-- header -->
+  <section class="hero is-primary is-bold">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+          Visualization: Fire Department Calls for Service, San Francisco 2018
+        </h1>
+        <h2 class="subtitle">
+          The Data Vizards
+        </h2>
+      </div>
     </div>
-  </div>
 
-  <!-- todo: change navigation as needed -->
-  <div class="hero-foot">
-    <div class="container">
-      <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="hero-foot">
+      <div class="container">
+        <nav class="navbar" role="navigation" aria-label="main navigation">
 
-        <div class="navbar-brand">
-          <a class="navbar-item" href="index.html">
+          <div class="navbar-brand">
+            <a class="navbar-item" href="index.html">
+                <span class="icon">
+                  <i class="fas fa-home"></i>
+                </span>
+              <span>Home</span>
+            </a>
+          </div>
+
+          <div id="main-navbar" class="navbar-menu">
+            <a class="navbar-item" href="data.html">
               <span class="icon">
-                <i class="fas fa-home"></i>
+                <i class="fas fa-table"></i>
               </span>
-            <span>Home</span>
-          </a>
-        </div>
+              <span>Data</span>
+            </a>
 
-        <div id="main-navbar" class="navbar-menu">
-          <a class="navbar-item" href="jvis.html">
+            <a class="navbar-item" href="jvis.html">
               <span class="icon">
-                <i class="fas fa-chart-area"></i>
+                <i class="fas fa-chart-bar"></i>
               </span>
-            <span>Jordan's Visualization</span>
-          </a>
+              <span>Jordan's Visualization</span>
+            </a>
 
-          <a class="navbar-item" href="bvis.html">
-              <span class="icon">
-                <i class="fas fa-chart-area"></i>
-              </span>
-            <span>Brian's Visualization</span>
-          </a>
-
-          <a class="navbar-item" href="gvis.html">
+            <a class="navbar-item" href="bvis.html">
               <span class="icon">
                 <i class="fas fa-chart-area"></i>
               </span>
-            <span>Gudbrand's Visualization</span>
-          </a>
-        </div>
-      </nav>
+              <span>Brian's Visualization</span>
+            </a>
+          </div>
+
+          <div class="navbar-end">
+            <a class="navbar-item" href="#prototype">
+              <span class="icon">
+                <i class="fas fa-image"></i>
+              </span>
+              <span>Prototype</span>
+            </a>
+          </div>
+
+        </nav>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="section">
-  <div class="container content">
-    <h2>Prototype 1</h2>
-    <div id="vis1"></div>
-  </div>
-  <div class="container content">
-    <h2>Prototype 2</h2>
-    <div id="vis2"></div>
-  </div>
-</section>
+  <section class="section" id="visualization">
+    <div class="container content">
+      <h2>D3 Visualization</h2>
 
+      <svg id="vis_g" class="visualization">
+      </svg>
 
-<!-- footer -->
-<footer class="footer">
-  <div class="content has-text-centered">
-    <small>
-      <a href="#top">
-        <span class="fas fa-arrow-up"></span>
-        <span>Back to Top</span>
-      </a>
-      <br/>
-      <a href="/">CS 360/560 Data Visualization</a>
-      &bullet;
-      <a href="https://myusf.usfca.edu/arts-sciences/computer-science">Department of Computer Science</a>
-      &bullet;
-      <a href="https://www.usfca.edu/">University of San Franciscio</a>
-    </small>
-  </div>
-</footer>
+      <h3>Interpretation</h3>
 
-<script>
+      <p>
+        If appropriate, provide a brief discussion of how to interpret this visualization (e.g. how the data is encoded) and how to interact with this visualization. Some of this discussion may not be necessary depending on the legends provided with the visualization.
+      </p>
 
-    vegaEmbed('#vis2', proto3);
-    vegaEmbed('#vis1', proto4);
-</script>
+      <h3>Discussion</h3>
+
+      <p>
+        If appropriate, provide a brief discussion of the primary goal and findings of the visualization, any challenges encountered creating the visualization, and any other context as required by the assignment.
+      </p>
+
+      <h3>Credit</h3>
+
+      <p>
+        If appropriate, provide credit for the dataset, any code used, and design inspirations here. Unsufficient discussion here is a violation of the <a href="/syllabus.html#cheating-policy">academic honesty policy</a> and may result in an F grade for the assignment or the <em>entire</em> course.
+      </p>
+    </div>
+  </section>
+
+  <!-- separator between sections -->
+  <hr class="container">
+
+  <section class="section" id="prototype">
+    <div class="container content">
+      <h2>Prototype</h2>
+
+      <div id="proto"></div>
+    </div>
+  </section>
+
+  <!-- footer -->
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <small>
+        <a href="#top">
+          <span class="fas fa-arrow-up"></span>
+          <span>Back to Top</span>
+        </a>
+        <br/>
+        <a href="/">CS 360/560 Data Visualization</a>
+        &bullet;
+        <a href="https://myusf.usfca.edu/arts-sciences/computer-science">Department of Computer Science</a>
+        &bullet;
+        <a href="https://www.usfca.edu/">University of San Franciscio</a>
+      </small>
+    </div>
+  </footer>
+
+  <script>
+      vegaEmbed('#proto', proto4);
+  </script>
 </body>
 </html>

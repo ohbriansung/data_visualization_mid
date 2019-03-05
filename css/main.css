@@ -31,6 +31,12 @@
   margin-right: 5px;
 }
 
-.hero-body, .hero-foot {
+/*.hero-body, .hero-foot {
   background-color: #353535;
+  /*  #ff5b5b * /
 }
+
+.navbar-item:hover {
+  background-color: #353535;
+  color: #44bdbd;
+}*/

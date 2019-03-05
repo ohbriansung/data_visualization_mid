@@ -1,8 +1,11 @@
 var proto1 = {
     "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
-    "data": {"url": "data/Fire_Department_Calls_for_Service_2018.csv"},
+    "width": 960,
+    "height": 500,
+    "data": {"url": "data/jordan_data.csv"},
 
     "mark": "bar",
+    "title": "Distribution of Call Type and Month",
     "encoding": {
         "x": {
             "timeUnit": "month",
@@ -23,36 +26,13 @@ var proto1 = {
 
 };
 
-var proto2 = {
-    "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
-    "data": {"url": "data/Fire_Department_Calls_for_Service_2018.csv"},
-    "mark": "line",
-    "encoding": {
-        "x": {
-            "timeUnit": "date",
-            "field": "Entry DtTm",
-            "type": "ordinal"
-        },
-        "y": {
-            "aggregate":"mean",
-            "field": "Station Area",
-            "type": "quantitative"
-        },
-        color:{
-            "field":"Unit Type",
-            "type": "nominal"
-        }
-
-    }
-
-};
-
 var proto3 = {
     "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
     "width": 960,
     "height": 500,
     "data": {"url": "data/modified_data.csv"},
     "mark": "line",
+    "title": "Distribution of Call Type and Neighborhoods",
     "encoding": {
         "x": {
             "timeUnit": "month",
@@ -67,32 +47,7 @@ var proto3 = {
         color:{
             "field":"Neighborhooods - Analysis Boundaries",
             "type": "nominal",
-        }
-
-    }
-};
-
-
-var proto4 = {
-    "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
-    "width": 960,
-    "height": 500,
-    "data": {"url": "data/modified_data.csv"},
-    "mark": "bar",
-    "encoding": {
-        "x": {
-            "timeUnit": "month",
-            "field": "Call Date",
-            "type": "ordinal"
-        },
-        "y": {
-            "aggregate":"count",
-            "field": "Call Type Group",
-            "type": "quantitative",
-        },
-        color:{
-            "field":"Neighborhooods - Analysis Boundaries",
-            "type": "nominal",
+            "legend": {"title": "Neighborhoods"}
         }
 
     }
@@ -105,6 +60,7 @@ var proto5 = {
   "height": 500,
   "mark": "bar",
 
+  "title": "Distribution of Response Time and Weekday",
   "encoding": {
     "x": {
       "field": "response_time",
