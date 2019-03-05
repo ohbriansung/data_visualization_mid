@@ -49,24 +49,6 @@ var proto2 = {
 
 var proto3 = {
     "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
-<<<<<<< HEAD
-    "data": {"url": "data/response_time_per_weekday.csv"},
-    "mark": "bar",
-
-    "encoding": {
-      "x": {
-        "field": "response_time",
-        "aggregate": "mean",
-        "type": "quantitative",
-        "axis": {"title": "Average Response Time (Second)"}
-      },
-      "y": {
-        "field": "weekday",
-        "type": "ordinal",
-        "axis": {"title": "Weekday"},
-        "sort": {"encoding": "x"}
-      }
-=======
     "width": 960,
     "height": 500,
     "data": {"url": "data/modified_data.csv"},
@@ -113,6 +95,28 @@ var proto4 = {
             "type": "nominal",
         }
 
->>>>>>> 0665c8198e42f27d3942eb1a4e4da8321a7ce3c0
     }
+};
+
+var proto5 = {
+  "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+  "data": {"url": "data/response_time_per_weekday.csv"},
+  "width": 960,
+  "height": 500,
+  "mark": "bar",
+
+  "encoding": {
+    "x": {
+      "field": "response_time",
+      "aggregate": "mean",
+      "type": "quantitative",
+      "axis": {"title": "Average Response Time (Second)"}
+    },
+    "y": {
+      "field": "weekday",
+      "type": "ordinal",
+      "axis": {"title": "Weekday"},
+      "sort": {"encoding": "x"}
+    }
+  }
 };

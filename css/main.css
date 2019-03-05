@@ -1,15 +1,15 @@
 #proto {
-    display: none;
+  display: none;
 }
 
 .center{
-    margin: auto;
-    width: 60%;
-    padding: 10px;
+  margin: auto;
+  width: 60%;
+  padding: 10px;
 }
 
 .font-centered {
-   align-content: center;
+  align-content: center;
 }
 
 .snip {
@@ -28,5 +28,9 @@
 }
 
 .vega-actions a {
-    margin-right: 5px;
+  margin-right: 5px;
+}
+
+.hero-body, .hero-foot {
+  background-color: #353535;
 }
