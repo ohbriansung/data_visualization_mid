@@ -116,7 +116,9 @@
       </table>
 
       <p>
-        Data Processing: Filtered "City" column to remove data that's not happened in "San Francisco". Filtered "Call Date" column to remove data that's not happened in "2018". Removed redundant columns, such as "Call Number", "Unit ID", "Incident Number", "Location", "RowID". See the script source code in <a href="https://github.com/usf-cs360-spring2019/midterm-the-data-vizards/tree/gh-pages/data" target="_blank">"data"</a> folder.
+        Data Processing: (See <a href="https://github.com/usf-cs360-spring2019/midterm-the-data-vizards/tree/gh-pages/data" target="_blank">script source code</a>)<br>
+        1. Get records in San Francisco, 2018: Filtered "City" and "Call Date" columns to get records in "San Francisco" and "2018". Removed "Call Number", "Unit ID", "Incident Number", "Location" and "RowID" columns.<br>
+        2. Get response time: Parsed "Received DtTm" and "Response DtTm" into datetime in Python, and calculated the difference in second format.
       </p>
     </div>
   </section>
