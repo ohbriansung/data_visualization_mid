@@ -1,5 +1,3 @@
-// vis_b1
-
 const weekday = [
   "Sunday",
   "Monday",
@@ -62,97 +60,69 @@ getTop = function(list, num) {
   return top;
 }
 
+neighborhoodFormatter = function(d) {
+  let length = d.length;
+
+  if (length > 25) {
+    let label = d3.select(this);
+    label.text("");
+    let text1 = d.substr(0, 24);
+    let text2 = d.substr(25);
+
+    let firstLine = label.append("tspan").text(text1);
+    let secondLine = label.append("tspan").text(text2);
+
+    firstLine.attr("x", "-6");
+    firstLine.attr("y", "-0.5em");
+    secondLine.attr("x", "-6");
+    secondLine.attr("dy", "1em");
+  }
+}
+
 heatmap = function(map, top) {
-  let margin = {
+  const margin = {
     top: 60,
     right: 250,
     bottom: 80,
-    left: 20
+    left: 60
   };
 
-  const svg = d3.select("#vis");
+  const svg = d3.select("#vis_b1");
   const bounds = svg.node().getBoundingClientRect();
   const plotWidth = bounds.width - margin.right - margin.left;
   const plotHeight = bounds.height - margin.top - margin.bottom;
 
+  // color encoding range
+  let min = map[top[top.length - 1]]["total"] - 30;
+  let max = map[top[0]]["total"] + 30;
+  let mid = (min + max / 2);
+  let range = [min, mid, max];
+
+  // create x, y, color scales
+  let x = d3.scaleBand().domain(weekday).range([0, plotWidth]);
+  let y = d3.scaleBand().domain(top).range([0, plotHeight]);
+  let color = d3.scaleSequential(d3.interpolateRed).domain(range);
+
+  //  create plot
   let plot = svg.append("g");
-  plot.attr("id", "plot");
+  plot.attr("id", "plot1");
   plot.attr("transform", translate(margin.left, margin.top));
 
-  let x = d3.scalePoint().range([0, plotWidth]).padding(0.18);
-  let y = {};
+  // create x and y  axis
+  let xAxis = d3.axisTop(x).tickPadding(0);
+  let yAxis = d3.axisLeft(y).tickPadding(0);
 
-  let dimensions = d3.keys(data[0]).filter(function(d) {
-    if (d == "region" || d == "tier" || d == "par_rank" || d == "k_rank") {
-      y[d] = d3.scaleLinear()
-          .domain(d3.extent(data, function(p) { return +p[d]; }))
-          .range([plotHeight, 0]);
+  let xGroup = plot.append("g").attr("id", "x-axis-1");
+  xGroup.call(xAxis);
+  xGroup.attr("transform", translate(margin.left, 0));
+  xGroup.attr("class", "axis");
 
-      return true;
-    }
-
-    return false;
-  }).sort(sortAxis);
-
-  x.domain(dimensions);
-
-  let minimum = getMin(x, dimensions) - margin.left;
-
-  // draw lines and colors
-  let background = plot.append("g")
-    .attr("class", "line")
-    .selectAll("path")
-    .data(data)
-    .enter().append("path")
-    .attr("d", path)
-    .attr("stroke", function(d) { return colors[d["tier_name"]]; });
-
-  // draw axises
-  let dimension = plot.selectAll(".dimension")
-    .data(dimensions)
-    .enter().append("g")
-    .attr("class", "dimension")
-    .attr("transform", function(d) { return translate(x(d) - minimum, 0); });
-
-  // axis titles
-  dimension.append("g")
-    .attr("class", "axis")
-    .each(function(d) { d3.select(this).call(d3.axisLeft().scale(y[d])); })
-    .append("text")
-    .style("text-anchor", "middle")
-    .attr("y", -10)
-    .text(function(d) { return d; });
-
-  function path(d) {
-    return d3.line()(dimensions.map(function(p) { return [x(p) - minimum, y[p](+d[p])]; }));
-  }
-
-  // color encoding for legend
-  let color_map = get_colors(tier_map);
-  let colorScale = d3.scaleOrdinal().range(color_map).domain(tier_map);
-
-  // legend
-  let legend = svg.selectAll(".legend")
-		.data(colorScale.domain())
-		.enter()
-    .append("g")
-		.attr("class", "legend")
-		.attr("transform", function(d, i) {
-      return translate(plotWidth, 15 + i * 20);
-    });
-
-	legend.append("rect")
-		.attr("width", 18)
-		.attr("height", 18)
-		.style("fill", colorScale);
-
-	legend.append("text")
-    .attr("class", "label")
-		.attr("x", 23)
-		.attr("y", 12)
-		.style("text-anchor", "start")
-		.text(function(d, i) { return (i + 1) + " " + d; });
-
+  let yGroup = plot.append("g").attr("id", "y-axis-1");
+  yGroup.call(yAxis);
+  yGroup.attr("transform", translate(margin.left, 0));
+  yGroup.attr("class", "axis");
+  yGroup.selectAll(".tick text").each(neighborhoodFormatter);
+/*
   // title
   svg.append("text")
     .attr("text-anchor", "start")
@@ -188,6 +158,7 @@ heatmap = function(map, top) {
     .attr("dy", "3em")
     .attr("transform", translate(-5, plotHeight + 30))
     .text("school. However, this could be a result of fewer years of experience. Furthermore, we can see tier 1 schools are mostly located in West (more solid line).");
+    */
 }
 
 d3.csv(
@@ -197,5 +168,5 @@ d3.csv(
   let map = countDay(d);
   let list  = sortList(map);
   let top = getTop(list, 10);
-  //heatmap(map, top);
+  heatmap(map, top);
 })
