@@ -81,10 +81,10 @@ neighborhoodFormatter = function(d) {
 
 heatmap = function(map, top) {
   const margin = {
-    top: 60,
+    top: 70,
     right: 250,
     bottom: 80,
-    left: 60
+    left: 70
   };
 
   const svg = d3.select("#vis_b1");
@@ -93,15 +93,22 @@ heatmap = function(map, top) {
   const plotHeight = bounds.height - margin.top - margin.bottom;
 
   // color encoding range
-  let min = map[top[top.length - 1]]["total"] - 30;
-  let max = map[top[0]]["total"] + 30;
-  let mid = (min + max / 2);
+  let min = map[top[0]]["total"];
+  let max = 0;
+  for (let i = 0; i < top.length; i++) {
+    for (let j = 0; j < weekday.length; j++) {
+      min = Math.min(min, map[top[i]]["weekday"][weekday[j]]);
+      max = Math.max(max, map[top[i]]["weekday"][weekday[j]]);
+    }
+  }
+  let mid = (min + max) / 2 + 200;
+  min -= 30;
   let range = [min, mid, max];
 
   // create x, y, color scales
   let x = d3.scaleBand().domain(weekday).range([0, plotWidth]);
   let y = d3.scaleBand().domain(top).range([0, plotHeight]);
-  let color = d3.scaleSequential(d3.interpolateRed).domain(range);
+  let color = d3.scaleSequential(d3.interpolateReds).domain(range);
 
   //  create plot
   let plot = svg.append("g");
@@ -115,50 +122,134 @@ heatmap = function(map, top) {
   let xGroup = plot.append("g").attr("id", "x-axis-1");
   xGroup.call(xAxis);
   xGroup.attr("transform", translate(margin.left, 0));
-  xGroup.attr("class", "axis");
+  xGroup.attr("class", "axis-heatmap");
 
   let yGroup = plot.append("g").attr("id", "y-axis-1");
   yGroup.call(yAxis);
   yGroup.attr("transform", translate(margin.left, 0));
-  yGroup.attr("class", "axis");
+  yGroup.attr("class", "axis-heatmap");
   yGroup.selectAll(".tick text").each(neighborhoodFormatter);
-/*
+
+  // Y axis name
+  plot.append("text")
+    .attr("class", "legendText")
+    .attr("transform", translate(-5, -5))
+    .text("Neighborhood");
+
+  // create one group per row
+  let rows = plot.selectAll("g.cell")
+    .data(top)
+    .enter()
+    .append("g");
+
+  rows.attr("class", "cell");
+  rows.attr("id", function(d) { return "Neighborhood-" + d; });
+  rows.attr("transform", function(d) { return translate(margin.left, y(d)); });
+
+  // create one rect per cell within row group
+
+  let cells = rows.selectAll("rect")
+    .data(function(d) {
+      return weekday.map(
+        function(p) {
+          return {"day": p, "value": map[d]["weekday"][p]};
+        }
+      );
+    })
+    .enter()
+    .append("rect");
+
+  cells.attr("x", function(d) { return x(d["day"]); });
+  cells.attr("y", 0); // handled by group transform
+  cells.attr("width", x.bandwidth());
+  cells.attr("height", y.bandwidth());
+  cells.attr("count", function(d) { return d["value"]; });
+  cells.style("fill", function(d) { return color(d["value"]); });
+  cells.style("stroke", function(d) { return color(d["value"]); });
+
+  // create legend
+  let legendWidth = 110;
+  let legendHeight = 20;
+  let legend = svg.append("g").attr("id", "color-legend");
+  legend.attr("transform", translate(plotWidth + margin.left + legendWidth / 2 + 45, 15))
+
+  let legendTitle = legend.append("text")
+    .attr("class", "legendText")
+    .attr("dx", -20)
+    .attr("dy", 12)
+    .text("Number of Records");
+
+  // create the rectangle
+  let colorBox = legend.append("rect")
+    .attr("x", 0)
+    .attr("y", 12 + 6)
+    .attr("width", legendWidth)
+    .attr("height", legendHeight);
+
+  let colorDomain = [min, max];
+  let percent = d3.scaleLinear().range([0, 100]).domain(colorDomain);
+
+  // we have to first add gradients
+  let defs = svg.append("defs");
+  defs.append("linearGradient")
+    .attr("id", "gradient")
+    .selectAll("stop")
+    .data(color.ticks())
+    .enter()
+    .append("stop")
+    .attr("offset", (d => percent(d) + "%"))
+    .attr("stop-color", (d => color(d)));
+  colorBox.attr("fill", "url(#gradient)");
+
+  legend.append("text")
+    .attr("class", "legendText")
+    .attr("x", -18)
+    .attr("y", 32)
+    .style("text-anchor", "start")
+    .text(min + 30);
+
+  legend.append("text")
+    .attr("class", "legendText")
+    .attr("x", legendWidth + 2)
+    .attr("y", 32)
+    .style("text-anchor", "start")
+    .text(max);
+
   // title
   svg.append("text")
     .attr("text-anchor", "start")
     .attr("class", "title")
     .attr("transform", translate(15, 35))
-    .text("Parents’ and Children’s Income Distributions by College Tier");
+    .text("Frequency of Fire Incidents in Top 10 Neighborhoods per Weekday");
 
   // caption
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "0em")
-    .attr("transform", translate(-5, plotHeight + 30))
+    .attr("transform", translate(-margin.left + 10, plotHeight + 20))
     .text("Author: Brian Sung");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "1em")
-    .attr("transform", translate(-5, plotHeight + 30))
-    .text("You can see in the chart, children attending high-tier schools come from families with better income. For example, all families with children go to schools between");
+    .attr("transform", translate(-margin.left + 10, plotHeight + 20))
+    .text("The view is filtered on Neighborhoods, which keeps top 10 of 42 members based on total number of records. The Neighborhoods axis is");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "2em")
-    .attr("transform", translate(-5, plotHeight + 30))
-    .text("tier 1 to tier 4 have income rank above 0.65. We can also tell from the chart that children's earning might not be greater than their parents' even if they go to a tier 1");
+    .attr("transform", translate(-margin.left + 10, plotHeight + 20))
+    .text("sorted by total number of records as well. The color repersents the frequency of fire incidents, the darker ther higher. Weekend, includes");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "3em")
-    .attr("transform", translate(-5, plotHeight + 30))
-    .text("school. However, this could be a result of fewer years of experience. Furthermore, we can see tier 1 schools are mostly located in West (more solid line).");
-    */
+    .attr("transform", translate(-margin.left + 10, plotHeight + 20))
+    .text("Friday, seems to be the period that incidents happened the most for these neighborhoods.");
 }
 
 d3.csv(

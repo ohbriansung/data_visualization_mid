@@ -31,6 +31,26 @@
   margin-right: 5px;
 }
 
+.legendText {
+  fill: dimgrey;
+  font-size: 12px;
+}
+
+.captions {
+  fill: #7D7D7D;
+  font-size: 13.3px;
+}
+
+.title {
+  font-size: 20px;
+}
+
+.axis-heatmap path,
+.axis-heatmap line {
+  stroke: none;
+  fill: none;
+}
+
 /*.hero-body, .hero-foot {
   background-color: #353535;
   /*  #ff5b5b * /
