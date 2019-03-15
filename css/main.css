@@ -62,7 +62,6 @@ text {
 }
 
 text, .tooltip {
-  font-family: sans-serif;
   font-size: 10pt;
 }
 
@@ -73,8 +72,6 @@ text, .tooltip {
   padding: 8px;
   background: #ddd;
   pointer-events: none;
-  border: 1px solid #eee;
-  border-radius: 10px;
 }
 
 /*.hero-body, .hero-foot {

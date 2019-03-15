@@ -8,6 +8,13 @@ const weekday = [
   "Saturday"
 ]
 
+const top4CallTypeAndColor = {
+  "Outside Fire": "#E15759",
+  "Structure Fire": "#FF9D9A",
+  "Water Rescue": "#FABFD2",
+  "Vehicle Fire": "#D37295"
+}
+
 translate = function(a, b) {
   return "translate(" + a + ", " + b + ")";
 }
@@ -57,6 +64,7 @@ getTop = function(list, num) {
     top.push(list[i]);
   }
 
+  topNeighborhood = top;
   return top;
 }
 
@@ -133,7 +141,7 @@ heatmap = function(map, top) {
   // Y axis name
   plot.append("text")
     .attr("class", "legendText")
-    .attr("transform", translate(0, -6))
+    .attr("transform", translate(-8, -6))
     .style("text-anchor", "start")
     .text("Neighborhood");
 
@@ -303,7 +311,7 @@ heatmap = function(map, top) {
       .style("stroke", e => color(e["value"]));
   });
 
-  heats.on("mouseover.highlight", function(d) {
+  heats.on("mouseover.hover", function(d) {
     let div = d3.select("body").append("div");
     div.attr("id", "details");
     div.attr("class", "tooltip");
@@ -318,23 +326,69 @@ heatmap = function(map, top) {
     table.append("td").text(key => d[key]);
   });
 
-  heats.on("mousemove.highlight", function(d) {
+  heats.on("mousemove.hover", function(d) {
     let div = d3.select("div#details");
-    div.style("left", d3.event.clientX + "px")
-    div.style("top",  d3.event.clientY + "px");
+    div.style("left", d3.event.pageX + 5 + "px")
+    div.style("top",  d3.event.pageY + 5 + "px");
   });
 
-  heats.on("mouseout.highlight", function(d) {
+  heats.on("mouseout.hover", function(d) {
     d3.selectAll("div#details").remove();
   });
+}
+
+getPieMap = function(d, topNeighborhood) {
+  let top4 = Object.keys(top4CallTypeAndColor);
+  let pieMap = {};
+
+  for (let i = 0; i < d.length; i++) {
+    let type = d[i]["Call Type"];
+
+    if (type in top4CallTypeAndColor) {
+      let neighborhood = d[i]["Neighborhooods - Analysis Boundaries"];
+
+      if (topNeighborhood.indexOf(neighborhood) != -1) {
+        let year = d[i]["Call Date"].substring(6);
+        let paramedic = d[i]["ALS Unit"];
+
+        if (!(year in pieMap)) {
+          pieMap[year] = {
+            "true": {},
+            "false": {},
+            "total": 0
+          };
+
+          for (let j = 0; j < top4.length; j++) {
+            pieMap[year]["true"][top4[j]] = 0;
+            pieMap[year]["false"][top4[j]] = 0;
+          }
+        }
+
+        pieMap[year][paramedic][type]++;
+        pieMap[year]["total"]++;
+      }
+    }
+  }
+
+  return pieMap;
+}
+
+pie = function(pieMap, topNeighborhood) {
+  
 }
 
 d3.csv(
   "data/SF_Fire_2016_To_2018.csv"
 )
 .then(function(d) {
+  // heatmap
   let map = countDay(d);
-  let list  = sortList(map);
+  let list = sortList(map);
   let top = getTop(list, 10);
   heatmap(map, top);
+
+  let pieMap = getPieMap(d, top);
+  pie(pieMap, top);
+
+  console.log("Finished!");
 })
