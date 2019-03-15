@@ -167,7 +167,11 @@ heatmap = function(map, top) {
     .data(function(d) {
       return weekday.map(
         function(p) {
-          return {"day": p, "value": map[d]["weekday"][p]};
+          return {
+            "neighborhood": d,
+            "day": p,
+            "value": map[d]["weekday"][p]
+          };
         }
       );
     })
@@ -178,7 +182,7 @@ heatmap = function(map, top) {
   cells.attr("y", 0); // handled by group transform
   cells.attr("width", x.bandwidth());
   cells.attr("height", y.bandwidth());
-  cells.attr("count", function(d) { return d["value"]; });
+  cells.attr("class", "cell");
   cells.style("fill", function(d) { return color(d["value"]); });
   cells.style("stroke", function(d) { return color(d["value"]); });
 
@@ -186,7 +190,9 @@ heatmap = function(map, top) {
   let legendWidth = 100;
   let legendHeight = 18;
   let legend = svg.append("g").attr("id", "color-legend");
-  legend.attr("transform", translate(plotWidth + margin.left + legendWidth / 2 + 65, 15))
+  legend.attr("transform", translate(
+    (plotWidth + margin.left + legendWidth / 2 + 65), 15
+  ));
 
   let legendTitle = legend.append("text")
     .attr("dx", -20)
@@ -195,7 +201,7 @@ heatmap = function(map, top) {
 
   // create the rectangle
   let colorBox = legend.append("rect")
-    .attr("class", "grid-line")
+    .attr("class", "frame")
     .attr("x", 0)
     .attr("y", 12 + 6)
     .attr("width", legendWidth)
@@ -263,6 +269,64 @@ heatmap = function(map, top) {
     .attr("dy", "3em")
     .attr("transform", translate(-margin.left + 10, plotHeight + 20))
     .text("Friday, seems to be the period that incidents happened the most for these neighborhoods.");
+
+  // interaction
+  let days = d3.select("g#x-axis-1").selectAll("g.tick");
+  let neighborhoods = d3.select("g#y-axis-1").selectAll("g.tick");
+  let heats = d3.selectAll("rect.cell");
+
+  days.on("mouseover.brushingDays", function(d) {
+    heats.filter(e => (e["day"] != d))
+      .transition()
+      .style("fill", "#B0B0B0")
+      .style("stroke", "#B0B0B0");
+  });
+
+  days.on("mouseout.brushingDays", function(d) {
+    heats.filter(e => (e["day"] != d))
+      .transition()
+      .style("fill", e => color(e["value"]))
+      .style("stroke", e => color(e["value"]));
+  });
+
+  neighborhoods.on("mouseover.brushingNeighborhoods", function(d) {
+    heats.filter(e => (e["neighborhood"] != d))
+      .transition()
+      .style("fill", "#B0B0B0")
+      .style("stroke", "#B0B0B0");
+  });
+
+  neighborhoods.on("mouseout.brushingNeighborhoods", function(d) {
+    heats.filter(e => (e["neighborhood"] != d))
+      .transition()
+      .style("fill", e => color(e["value"]))
+      .style("stroke", e => color(e["value"]));
+  });
+
+  heats.on("mouseover.highlight", function(d) {
+    let div = d3.select("body").append("div");
+    div.attr("id", "details");
+    div.attr("class", "tooltip");
+
+    let table = div.append("table")
+      .selectAll("tr")
+      .data(Object.keys(d))
+      .enter()
+      .append("tr");
+
+    table.append("th").text(key => key);
+    table.append("td").text(key => d[key]);
+  });
+
+  heats.on("mousemove.highlight", function(d) {
+    let div = d3.select("div#details");
+    div.style("left", d3.event.clientX + "px")
+    div.style("top",  d3.event.clientY + "px");
+  });
+
+  heats.on("mouseout.highlight", function(d) {
+    d3.selectAll("div#details").remove();
+  });
 }
 
 d3.csv(
