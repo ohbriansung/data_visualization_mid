@@ -82,9 +82,9 @@ neighborhoodFormatter = function(d) {
 heatmap = function(map, top) {
   const margin = {
     top: 70,
-    right: 250,
+    right: 260,
     bottom: 80,
-    left: 70
+    left: 85
   };
 
   const svg = d3.select("#vis_b1");
@@ -133,8 +133,24 @@ heatmap = function(map, top) {
   // Y axis name
   plot.append("text")
     .attr("class", "legendText")
-    .attr("transform", translate(-5, -5))
+    .attr("transform", translate(0, -6))
+    .style("text-anchor", "start")
     .text("Neighborhood");
+
+  // create grid line
+  plot.append("line")
+    .attr("class", "grid-line")
+    .attr("x1", -margin.left + 10)
+    .attr("y1", 0)
+    .attr("x2", margin.left)
+    .attr("y2", 0);
+
+   plot.append("line")
+    .attr("class", "grid-line")
+    .attr("x1", -margin.left + 10)
+    .attr("y1", plotHeight)
+    .attr("x2", margin.left)
+    .attr("y2", plotHeight);
 
   // create one group per row
   let rows = plot.selectAll("g.cell")
@@ -147,7 +163,6 @@ heatmap = function(map, top) {
   rows.attr("transform", function(d) { return translate(margin.left, y(d)); });
 
   // create one rect per cell within row group
-
   let cells = rows.selectAll("rect")
     .data(function(d) {
       return weekday.map(
@@ -168,19 +183,19 @@ heatmap = function(map, top) {
   cells.style("stroke", function(d) { return color(d["value"]); });
 
   // create legend
-  let legendWidth = 110;
-  let legendHeight = 20;
+  let legendWidth = 100;
+  let legendHeight = 18;
   let legend = svg.append("g").attr("id", "color-legend");
-  legend.attr("transform", translate(plotWidth + margin.left + legendWidth / 2 + 45, 15))
+  legend.attr("transform", translate(plotWidth + margin.left + legendWidth / 2 + 65, 15))
 
   let legendTitle = legend.append("text")
-    .attr("class", "legendText")
     .attr("dx", -20)
     .attr("dy", 12)
     .text("Number of Records");
 
   // create the rectangle
   let colorBox = legend.append("rect")
+    .attr("class", "grid-line")
     .attr("x", 0)
     .attr("y", 12 + 6)
     .attr("width", legendWidth)
@@ -189,7 +204,7 @@ heatmap = function(map, top) {
   let colorDomain = [min, max];
   let percent = d3.scaleLinear().range([0, 100]).domain(colorDomain);
 
-  // we have to first add gradients
+  // create color scheme for each offset
   let defs = svg.append("defs");
   defs.append("linearGradient")
     .attr("id", "gradient")
@@ -202,14 +217,12 @@ heatmap = function(map, top) {
   colorBox.attr("fill", "url(#gradient)");
 
   legend.append("text")
-    .attr("class", "legendText")
     .attr("x", -18)
     .attr("y", 32)
     .style("text-anchor", "start")
     .text(min + 30);
 
   legend.append("text")
-    .attr("class", "legendText")
     .attr("x", legendWidth + 2)
     .attr("y", 32)
     .style("text-anchor", "start")
