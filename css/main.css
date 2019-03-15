@@ -41,8 +41,8 @@
   font-size: 20px;
 }
 
-.axis-heatmap path,
-.axis-heatmap line {
+.axis-nopath path,
+.axis-nopath line {
   stroke: none;
   fill: none;
 }

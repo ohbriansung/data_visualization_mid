@@ -130,12 +130,12 @@ heatmap = function(map, top) {
   let xGroup = plot.append("g").attr("id", "x-axis-1");
   xGroup.call(xAxis);
   xGroup.attr("transform", translate(margin.left, 0));
-  xGroup.attr("class", "axis-heatmap");
+  xGroup.attr("class", "axis-nopath");
 
   let yGroup = plot.append("g").attr("id", "y-axis-1");
   yGroup.call(yAxis);
   yGroup.attr("transform", translate(margin.left, 0));
-  yGroup.attr("class", "axis-heatmap");
+  yGroup.attr("class", "axis-nopath");
   yGroup.selectAll(".tick text").each(neighborhoodFormatter);
 
   // Y axis name
@@ -148,14 +148,14 @@ heatmap = function(map, top) {
   // create grid line
   plot.append("line")
     .attr("class", "grid-line")
-    .attr("x1", -margin.left + 10)
+    .attr("x1", -margin.left + 12)
     .attr("y1", 0)
     .attr("x2", margin.left)
     .attr("y2", 0);
 
    plot.append("line")
     .attr("class", "grid-line")
-    .attr("x1", -margin.left + 10)
+    .attr("x1", -margin.left + 12)
     .attr("y1", plotHeight)
     .attr("x2", margin.left)
     .attr("y2", plotHeight);
@@ -373,8 +373,134 @@ getPieMap = function(d, topNeighborhood) {
   return pieMap;
 }
 
+upperFirstChar = function(d) {
+  d3.select(this).text(d.charAt(0).toUpperCase() + d.slice(1));
+}
+
 pie = function(pieMap, topNeighborhood) {
-  
+  const margin = {
+    top: 70,
+    right: 230,
+    bottom: 80,
+    left: 55
+  };
+
+  const svg = d3.select("#vis_b2");
+  const bounds = svg.node().getBoundingClientRect();
+  const plotWidth = bounds.width - margin.right - margin.left;
+  const plotHeight = bounds.height - margin.top - margin.bottom;
+
+  // create x, y, color scales
+  let x = d3.scaleBand().domain(Object.keys(pieMap)).range([0, plotWidth]);
+  let y = d3.scaleBand().domain(["true", "false"]).range([0, plotHeight]);
+  let colorEntries = Object.entries(top4CallTypeAndColor);
+  let colors = colorEntries.map(e => e[1]);
+  let callTypes = colorEntries.map(e => e[0]);
+  let colorScale = d3.scaleOrdinal().range(colors).domain(callTypes);
+
+  //  create plot
+  let plot = svg.append("g");
+  plot.attr("id", "plot2");
+  plot.attr("transform", translate(margin.left, margin.top));
+
+  // create x and y  axis
+  let xAxis = d3.axisTop(x).tickPadding(0);
+  let yAxis = d3.axisLeft(y).tickPadding(0);
+
+  let xGroup = plot.append("g").attr("id", "x-axis-2");
+  xGroup.call(xAxis);
+  xGroup.attr("transform", translate(margin.left, 0));
+  xGroup.attr("class", "axis-nopath");
+
+  let yGroup = plot.append("g").attr("id", "y-axis-2");
+  yGroup.call(yAxis);
+  yGroup.attr("transform", translate(margin.left, 0));
+  yGroup.attr("class", "axis-nopath");
+  yGroup.selectAll(".tick text").each(upperFirstChar);
+
+  // Y axis name
+  plot.append("text")
+    .attr("class", "legendText")
+    .attr("transform", translate(-15, -6))
+    .style("text-anchor", "start")
+    .text("Paramedic");
+
+  // create grid line
+  plot.append("line")
+    .attr("class", "grid-line")
+    .attr("x1", -margin.left + 12)
+    .attr("y1", 0)
+    .attr("x2", margin.left + plotWidth)
+    .attr("y2", 0);
+
+   plot.append("line")
+    .attr("class", "grid-line")
+    .attr("x1", -margin.left + 12)
+    .attr("y1", plotHeight)
+    .attr("x2", margin.left + plotWidth)
+    .attr("y2", plotHeight);
+
+  // legend
+  let legend = plot.selectAll(".legend")
+		.data(colorScale.domain())
+		.enter()
+    .append("g")
+		.attr("class", "legend")
+		.attr("transform", function(d, i) {
+      return translate(margin.left + plotWidth + 12, -margin.top + 35 + i * 20);
+    });
+
+	legend.append("rect")
+		.attr("width", 15)
+		.attr("height", 15)
+		.style("fill", colorScale);
+
+	legend.append("text")
+		.attr("x", 20)
+		.attr("y", 12)
+		.style("text-anchor", "start")
+		.text(function(d) { return d; });
+
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("transform", translate(margin.left + plotWidth + 10, -margin.top + 30))
+    .text("Call Type");
+
+  // title
+  svg.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "title")
+    .attr("transform", translate(15, 35))
+    .text("Top 4 Call Types Ratio in Top 10 Neighborhoods With/Without Paramedic per Year");
+
+  // caption
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "captions")
+    .attr("dy", "0em")
+    .attr("transform", translate(-margin.left + 10, plotHeight + 20))
+    .text("Author: Brian Sung");
+
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "captions")
+    .attr("dy", "1em")
+    .attr("transform", translate(-margin.left + 10, plotHeight + 20))
+    .text("The data is filtered on Neighborhood based on the number of records, which keeps 10 of 42 members. In addition, the view keeps the top 4");
+
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "captions")
+    .attr("dy", "2em")
+    .attr("transform", translate(-margin.left + 10, plotHeight + 20))
+    .text("Call Types based on the number of records. You can observe that the number and the ratio of Outside Fire increased every year and took");
+
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "captions")
+    .attr("dy", "3em")
+    .attr("transform", translate(-margin.left + 10, plotHeight + 20))
+    .text("most of the parts. Paramedic became more and more inportant for Outside Fire but not the other three.");
 }
 
 d3.csv(
