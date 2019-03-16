@@ -391,12 +391,14 @@ pie = function(pieMap, topNeighborhood) {
   const plotHeight = bounds.height - margin.top - margin.bottom;
 
   // create x, y, color scales
-  let x = d3.scaleBand().domain(Object.keys(pieMap)).range([0, plotWidth]);
-  let y = d3.scaleBand().domain(["true", "false"]).range([0, plotHeight]);
+  let year_list = Object.keys(pieMap);
+  let paramedic_list = ["true", "false"];
+  let x = d3.scaleBand().domain(year_list).range([0, plotWidth]);
+  let y = d3.scaleBand().domain(paramedic_list).range([0, plotHeight]);
   let colorEntries = Object.entries(top4CallTypeAndColor);
-  let colors = colorEntries.map(e => e[1]);
-  let callTypes = colorEntries.map(e => e[0]);
-  let colorScale = d3.scaleOrdinal().range(colors).domain(callTypes);
+  let color_list = colorEntries.map(e => e[1]);
+  let call_list = colorEntries.map(e => e[0]);
+  let colorScale = d3.scaleOrdinal().range(color_list).domain(call_list);
 
   //  create plot
   let plot = svg.append("g");
@@ -439,6 +441,47 @@ pie = function(pieMap, topNeighborhood) {
     .attr("y1", plotHeight)
     .attr("x2", margin.left + plotWidth)
     .attr("y2", plotHeight);
+
+  // create one group per row
+  let rows = plot.selectAll("g.cell")
+    .data(paramedic_list)
+    .enter()
+    .append("g");
+
+  rows.attr("class", "cell");
+  rows.attr("id", function(d) { return "Paramedic-" + d; });
+  rows.attr("transform", function(d) { return translate(margin.left, margin.top + y(d) + 17); });
+
+  // create one pie per cell within row group
+  let cells = rows.selectAll("g")
+    .data(function(d) {
+      return year_list.map(
+        function(p) {
+          return {
+            "year": p,
+            "paramedic": d,
+            "values": pieMap[p][d]
+          };
+        }
+      );
+    })
+    .enter()
+    .append("g");
+
+  cells.attr("transform", function(d) { return translate(x(d["year"]) + margin.left * 2 + 5, 0); });
+  cells.attr("width", x.bandwidth());
+  cells.attr("height", y.bandwidth());
+
+  let pie = d3.pie().sort(null).value(function(d) { return d[1]; });
+  let arc = d3.arc().innerRadius(0).outerRadius(50);
+  let pies = cells.selectAll(".pies")
+		.data(function(d) { return pie(Object.entries(d["values"])); })
+		.enter()
+		.append("g");
+
+  pies.append("path")
+    .attr("d", arc)
+    .attr("fill", function(d){ return colorScale(d["data"][0]); });
 
   // legend
   let legend = plot.selectAll(".legend")
