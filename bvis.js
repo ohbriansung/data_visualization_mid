@@ -178,7 +178,8 @@ heatmap = function(map, top) {
           return {
             "neighborhood": d,
             "day": p,
-            "value": map[d]["weekday"][p]
+            "value": map[d]["weekday"][p],
+            "total": map[d]["total"]
           };
         }
       );
@@ -323,8 +324,20 @@ heatmap = function(map, top) {
       .enter()
       .append("tr");
 
-    table.append("th").text(key => key);
-    table.append("td").text(key => d[key]);
+    table.append("th").text(function(p, i) {
+      if (i == 3) {
+        return "% of neighborhood";
+      } else {
+        return p;
+      }
+    });
+    table.append("td").text(function (p, i) {
+      if (i == 3) {
+        return ((d["value"] * 1.0) / d[p] * 100).toFixed(2) + "%";
+      } else {
+        return d[p];
+      }
+    });
   });
 
   heats.on("mousemove.hover", function(d) {
@@ -458,10 +471,18 @@ pie = function(pieMap, topNeighborhood) {
     .data(function(d) {
       return year_list.map(
         function(p) {
+          let values = pieMap[p][d];
+          let array = Object.values(values);
+          let total = 0;
+          for (let i = 0; i < array.length; i++) {
+            total += array[i];
+          }
+
           return {
             "year": p,
             "paramedic": d,
-            "values": pieMap[p][d]
+            "values": values,
+            "total": total
           };
         }
       );
@@ -476,11 +497,20 @@ pie = function(pieMap, topNeighborhood) {
   let pie = d3.pie().sort(null).value(function(d) { return d[1]; });
   let arc = d3.arc().innerRadius(0).outerRadius(50);
   let pies = cells.selectAll(".pies")
-		.data(function(d) { return pie(Object.entries(d["values"])); })
+		.data(function(d) {
+      let entries = Object.entries(d["values"]);
+      for (let i = 0; i < entries.length; i++) {
+        entries[i].push(d["year"]);
+        entries[i].push(d["paramedic"]);
+        entries[i].push(d["total"]);
+      }
+      return pie(entries);
+    })
 		.enter()
 		.append("g");
 
   pies.append("path")
+    .attr("class", "arc")
     .attr("d", arc)
     .attr("fill", function(d){ return colorScale(d["data"][0]); });
 
@@ -546,6 +576,79 @@ pie = function(pieMap, topNeighborhood) {
     .attr("dy", "3.6em")
     .attr("transform", translate(-margin.left + 10, plotHeight + 20))
     .text("most of the parts. Paramedic became more and more inportant for Outside Fire but not the other three.");
+
+  // interaction
+  let arcs = d3.selectAll("path.arc");
+  let legends = d3.select("#plot2").selectAll(".legend");
+
+  arcs.on("mouseover.brushingArcs", function(d) {
+    arcs.filter(e => (e["data"][0] != d["data"][0]))
+      .transition()
+      .style("fill", "#B0B0B0");
+  });
+
+  arcs.on("mouseout.brushingArcs", function(d) {
+    arcs.filter(e => (e["data"][0] != d["data"][0]))
+      .transition()
+      .style("fill", e => colorScale(e["data"][0]));
+  });
+
+  legends.on("mouseover.brushingLegends", function(d) {
+    arcs.filter(e => (e["data"][0] != d))
+      .transition()
+      .style("fill", "#B0B0B0");
+  });
+
+  legends.on("mouseout.brushingLegends", function(d) {
+    arcs.filter(e => (e["data"][0] != d))
+      .transition()
+      .style("fill", e => colorScale(e["data"][0]));
+  });
+
+  arcs.on("mouseover.hover2", function(d) {
+    let div = d3.select("body").append("div");
+    div.attr("id", "details");
+    div.attr("class", "tooltip");
+
+    let table = div.append("table")
+      .selectAll("tr")
+      .data(d["data"])
+      .enter()
+      .append("tr");
+
+    let currentValue = d["data"][1];
+
+    table.append("th").text(function(p, i) {
+      if (i == 0) {
+        return "call type";
+      } else if (i == 1) {
+        return "value";
+      } else if (i == 2) {
+        return "year";
+      } else if (i == 3) {
+        return "paramedic";
+      } else {
+        return "% of total";
+      }
+    });
+    table.append("td").text(function(p, i) {
+      if (i == 4) {
+        return ((currentValue * 1.0) / p * 100).toFixed(2);
+      } else {
+        return p;
+      }
+    });
+  });
+
+  arcs.on("mousemove.hover2", function(d) {
+    let div = d3.select("div#details");
+    div.style("left", d3.event.pageX + 5 + "px")
+    div.style("top",  d3.event.pageY + 5 + "px");
+  });
+
+  arcs.on("mouseout.hover2", function(d) {
+    d3.selectAll("div#details").remove();
+  });
 }
 
 d3.csv(
