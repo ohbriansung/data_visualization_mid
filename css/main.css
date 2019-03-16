@@ -31,6 +31,15 @@
   margin-right: 5px;
 }
 
+svg text {
+  color: #000000;
+  font-size: 13.3px;
+}
+
+.bold {
+  font-weight: 600;
+}
+
 .captions {
   fill: #7D7D7D;
   font-size: 13.3px;
@@ -45,12 +54,6 @@
 .axis-nopath line {
   stroke: none;
   fill: none;
-}
-
-text {
-  color: #000000;
-  font-size: 12px;
-  font-weight: bold;
 }
 
 .grid-line {

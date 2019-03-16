@@ -203,6 +203,7 @@ heatmap = function(map, top) {
   ));
 
   let legendTitle = legend.append("text")
+    .attr("class", "bold")
     .attr("dx", -20)
     .attr("dy", 12)
     .text("Number of Records");
@@ -260,21 +261,21 @@ heatmap = function(map, top) {
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
-    .attr("dy", "1em")
+    .attr("dy", "1.2em")
     .attr("transform", translate(-margin.left + 10, plotHeight + 20))
     .text("The view is filtered on Neighborhoods, which keeps top 10 of 42 members based on total number of records. The Neighborhoods axis is");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
-    .attr("dy", "2em")
+    .attr("dy", "2.4em")
     .attr("transform", translate(-margin.left + 10, plotHeight + 20))
     .text("sorted by total number of records as well. The color repersents the frequency of fire incidents, the darker ther higher. Weekend, includes");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
-    .attr("dy", "3em")
+    .attr("dy", "3.6em")
     .attr("transform", translate(-margin.left + 10, plotHeight + 20))
     .text("Friday, seems to be the period that incidents happened the most for these neighborhoods.");
 
@@ -505,6 +506,7 @@ pie = function(pieMap, topNeighborhood) {
 		.text(function(d) { return d; });
 
   plot.append("text")
+    .attr("class", "bold")
     .attr("text-anchor", "start")
     .attr("transform", translate(margin.left + plotWidth + 10, -margin.top + 30))
     .text("Call Type");
@@ -527,21 +529,21 @@ pie = function(pieMap, topNeighborhood) {
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
-    .attr("dy", "1em")
+    .attr("dy", "1.2em")
     .attr("transform", translate(-margin.left + 10, plotHeight + 20))
     .text("The data is filtered on Neighborhood based on the number of records, which keeps 10 of 42 members. In addition, the view keeps the top 4");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
-    .attr("dy", "2em")
+    .attr("dy", "2.4em")
     .attr("transform", translate(-margin.left + 10, plotHeight + 20))
     .text("Call Types based on the number of records. You can observe that the number and the ratio of Outside Fire increased every year and took");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
-    .attr("dy", "3em")
+    .attr("dy", "3.6em")
     .attr("transform", translate(-margin.left + 10, plotHeight + 20))
     .text("most of the parts. Paramedic became more and more inportant for Outside Fire but not the other three.");
 }
