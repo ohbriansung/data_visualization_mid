@@ -31,24 +31,50 @@
   margin-right: 5px;
 }
 
-.legendText {
-  fill: dimgrey;
-  font-size: 12px;
+svg text {
+  color: #000000;
+  font-size: 13.3px;
+}
+
+.bold {
+  font-weight: 600;
 }
 
 .captions {
   fill: #7D7D7D;
   font-size: 13.3px;
+  font-weight: normal;
 }
 
 .title {
   font-size: 20px;
 }
 
-.axis-heatmap path,
-.axis-heatmap line {
+.axis-nopath path,
+.axis-nopath line {
   stroke: none;
   fill: none;
+}
+
+.grid-line {
+  stroke: #D7D7D7;
+}
+
+.frame {
+  stroke: #B0B0B0;
+}
+
+text, .tooltip {
+  font-size: 10pt;
+}
+
+.tooltip {
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 8px;
+  background: #ddd;
+  pointer-events: none;
 }
 
 /*.hero-body, .hero-foot {
