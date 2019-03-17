@@ -77,6 +77,10 @@ text, .tooltip {
   pointer-events: none;
 }
 
+.tooltip th {
+  padding-right: 5px;
+}
+
 /*.hero-body, .hero-foot {
   background-color: #353535;
   /*  #ff5b5b * /
