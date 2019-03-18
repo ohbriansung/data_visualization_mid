@@ -15,7 +15,9 @@ const callType=[
     "Structure Fire",
     "Vehicle Fire",
     "Water Rescue",
-    "Outside Fire"
+    "Outside Fire",
+    "Explosion",
+    "Marine Fire"
 ]
 
 function barMap(d) {
@@ -23,22 +25,26 @@ function barMap(d) {
     for (let i = 0; i < d.length; i++) {
         let row = d[i]
         var callType = row["Call Type"];
-        if (!(callType in map)) {
-            map[callType] = {
-                "diff": 0,
-                "total": 0
+        if (callType !=="Water Rescue") {
+            if (!(callType in map)) {
+                map[callType] = {
+                    "diff": 0,
+                    "total": 0
+                }
             }
+            let diff = parseInt(row["Time Difference"]);
+            map[callType]["total"]++
+            map[callType]["diff"] += diff
         }
-        let diff = parseInt(row["Time Difference"]);
-        map[callType]["total"]++
-        map[callType]["diff"] += diff
     }
     let bmap = d3.map()
-    for(let key in map){
+    let test = {"Explosion":5.09, "Marine Fire":8.27, "Outside Fire":5.03, "Structure Fire":15.69, "Vehicle Fire":4.96};
+    for(let key in test){
         if(!(bmap.has(key))){
-            let val = map[key]
-            let pdif = val["diff"]/val["total"]
-            bmap.set(key,pdif )
+            let val = test[key]
+            // let val = map[key]
+            // let pdif = val["diff"]/val["total"]
+            bmap.set(key,val )
         }
     }
     return bmap
@@ -159,15 +165,17 @@ function scatterMap(cmap){
     let keys = Object.keys(cmap)
     for(let key in keys){
         let ct = keys[key]
-        for(let ye in year){
-            let yea = year[ye]
-            for(q in Q){
-                let quarter = Q[q]
-                let total =  cmap[ct]["year"][yea]["quarter"][quarter]["total"]
-                let totaldiff = cmap[ct]["year"][yea]["quarter"][quarter]["time diff"]
-                let diff = totaldiff / total
-                let output = [ct, yea, quarter, total, diff]
-                smap.push(output)
+        if(ct !=="Marine Fire" || ct !=="Explosion") {
+            for (let ye in year) {
+                let yea = year[ye]
+                for (q in Q) {
+                    let quarter = Q[q]
+                    let total = cmap[ct]["year"][yea]["quarter"][quarter]["total"]
+                    let totaldiff = cmap[ct]["year"][yea]["quarter"][quarter]["time diff"]
+                    let diff = totaldiff / total
+                    let output = [ct, yea, quarter, total, diff]
+                    smap.push(output)
+                }
             }
         }
     }
@@ -196,10 +204,11 @@ var drawBar = function(data,bmap){
             return d["key"];
         }))
         .range([
+            "E377C2",
+            "EB6E49",
             "E03426",
-            "FC719E",
-            "F89217",
-            "F8B620"
+            "F1CE63",
+            "F9A750"
         ]);
 
     let countScale = d3.scaleLinear()
@@ -223,7 +232,7 @@ var drawBar = function(data,bmap){
     }
 
     let xAxis = d3.axisBottom(callTypeScale);
-    let yAxis = d3.axisLeft(countScale).ticks(5).tickSize(-plotWidth+50);
+    let yAxis = d3.axisLeft(countScale).ticks(9).tickSize(-plotWidth+50);
 
     if (plot.select("g#y-axis").size() < 1) {
         let xGroup = plot.append("g").attr("id", "x-axis");
@@ -353,12 +362,44 @@ var drawPlot = function(data, cmap) {
         d3.select(this).style("stroke", null)
     })
 
-    circles.on("mousedown", function (d) {
-        circles.filter(e=>(d[0] !== e[0])).transition().style("fill", "#bbbbbb");
+    // circles.on("mousedown", function (d) {
+    //     circles.filter(e=>(d[0] !== e[0])).transition().style("fill", "#bbbbbb");
+    // })
+    // svg.on("mouseup", function (d){
+    //     circles.transition().style("fill", d=> color(d[0]))
+    // })
+
+    circles.on("mouseover.tool", function(d){
+        console.log()
+        let me = d3.select(this);
+        let div = d3.select("body").append("div")
+
+        div.attr("id", "details");
+        div.attr("class","tooltip");
+
+        let rows= div.append("table")
+            .selectAll("tr")
+            .data(cmap)
+            .enter()
+            .append("tr")
+
+        rows.append("th").text(key=>d[0])
+        rows.append("td").text(key=>d[1])
     })
-    svg.on("mouseup", function (d){
-        circles.transition().style("fill", d=> color(d[0]))
-    })
+
+    circles.on("mousemove.tool", function(d) {
+        let div = d3.select("div#details");
+
+        // get height of tooltip
+        let bbox = div.node().getBoundingClientRect();
+
+        div.style("left", d3.event.clientX + "px")
+        div.style("top",  (d3.event.clientY - bbox.height) + "px");
+    });
+
+    circles.on("mouseout.tool", function(d) {
+        d3.selectAll("div#details").remove();
+    });
 
     //x axis
     svg.append("g")
