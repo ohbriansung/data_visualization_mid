@@ -83,9 +83,7 @@ function groupByCall(d){
         let yearDate = quart["year"];
         let quarterDate = quart["quarter"];
 
-        // if (priority !=null){
         map[callType]["year"][yearDate]["quarter"][quarterDate]["time diff"] +=diff;
-        // }
         map[callType]["year"][yearDate]["quarter"][quarterDate]["total"]++;
         map[callType]["year"][yearDate]["total"]++;
         map[callType]["total"]++;
@@ -108,7 +106,7 @@ function getbarmax(callmap){
 function getMax(callmap){
     var max=0
     callmap.forEach(function(arr){
-        let total = arr[3]
+        let total = arr["Total"]
         if(max<total){
             max = total
         }
@@ -126,60 +124,101 @@ function quarter_of_the_year(date) {
 
 var parser = function(row,index){
     if (callType.includes(row["Call Type"])){
-        if (row["On Scene DtTm"]) {
+        // if (row["On Scene DtTm"]) {
 
 
-            let out = {};
-            let calldate;
-            let words = ["Call Type", "Call Date", "Received DtTm", "On Scene DtTm", "Priority"]
+        let out = {};
+        let calldate;
+        let words = ["Call Type", "Call Date", "Received DtTm", "On Scene DtTm", "Priority"]
 
-            for (i in words) {
-                var num;
-                var incedentDateParse = d3.timeParse("%m/%d/%Y")
-                var incedentDateTimeParse = d3.timeParse("%m/%d/%Y %I:%M:%S %p")
-                var word = words[i];
-                if (word === "Call Date") {
-                    num = incedentDateParse(row[word]);
-                    calldate = num;
-                } else if (word === "Received DtTm" || word === "On Scene DtTm") {
-                    num = incedentDateTimeParse(row[word]);
-                } else {
-                    num = row[word]
-                }
-                out[word] = num;
+        for (i in words) {
+            var num;
+            var incedentDateParse = d3.timeParse("%m/%d/%Y")
+            var incedentDateTimeParse = d3.timeParse("%m/%d/%Y %I:%M:%S %p")
+            var word = words[i];
+            if (word === "Call Date") {
+                num = incedentDateParse(row[word]);
+                calldate = num;
+            } else if (word === "Received DtTm" || word === "On Scene DtTm") {
+                num = incedentDateTimeParse(row[word]);
+            } else {
+                num = row[word]
             }
-
-            var diffMs = out["On Scene DtTm"] - out["Received DtTm"];
-            var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000)
-            out["Time Difference"] = diffMins
-
-            var quarter = quarter_of_the_year(calldate);
-            out["quarter"] = quarter
-            return out;
+            out[word] = num;
         }
+        var diffMs = 0
+        var diffMins = 0
+        if (row["On Scene DtTm"]) {
+            diffMs = out["On Scene DtTm"] - out["Received DtTm"];
+            diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000)
+        }
+
+
+
+        out["Time Difference"] = diffMins
+
+        var quarter = quarter_of_the_year(calldate);
+        out["quarter"] = quarter
+        if( row["On Scene DtTm"]==="06/18/2016 9:11:00 PM"){
+            console.log(row)
+        }
+        return out;
+
     }
 };
+function scatterMap(data){
+    data.forEach(function(arr){
+        console.log(arr)
+    })
+}
+function scatter(row, index){
+    // let smap = d3.map();
+    if(row[Object.keys(row)[3]]) {
 
-function scatterMap(cmap){
-    let smap = [];
-    let keys = Object.keys(cmap)
-    for(let key in keys){
-        let ct = keys[key]
-        if(ct !=="Marine Fire" || ct !=="Explosion") {
-            for (let ye in year) {
-                let yea = year[ye]
-                for (q in Q) {
-                    let quarter = Q[q]
-                    let total = cmap[ct]["year"][yea]["quarter"][quarter]["total"]
-                    let totaldiff = cmap[ct]["year"][yea]["quarter"][quarter]["time diff"]
-                    let diff = totaldiff / total
-                    let output = [ct, yea, quarter, total, diff]
-                    smap.push(output)
-                }
-            }
-        }
+        let out = {}
+
+
+        out["Call Type"] = row[Object.keys(row)[0]]
+        out["Year"] = (row[Object.keys(row)[1]])
+        out["Quarter"] = row[Object.keys(row)[2]]
+        var timed = ""
+
+        timed = row[Object.keys(row)[3]]
+        var timeparse = parseFloat(timed.replace(/[\x00-\x1F\x7F-\x9F]/g, ""))
+        out["Time Diff"] = timeparse
+        out["Total"] = parseInt(row[Object.keys(row)[4]].replace(/[\x00-\x1F\x7F-\x9F]/g, ""))
+
+        return out
     }
-    return smap
+
+
+    // for(let key in data.columns){
+    //     if(!(smap.has(key))){
+    //         let val = test[key]
+    //         // let val = map[key]
+    //         // let pdif = val["diff"]/val["total"]
+    //         bmap.set(key,val )
+    //     }
+    // }
+    // retu
+    // let keys = Object.keys(cmap)
+    // for(let key in keys){
+    //     let ct = keys[key]
+    //     if(ct !=="Marine Fire" && ct !=="Explosion") {
+    //         for (let ye in year) {
+    //             let yea = year[ye]
+    //             for (q in Q) {
+    //                 let quarter = Q[q]
+    //                 let total = cmap[ct]["year"][yea]["quarter"][quarter]["total"]
+    //                 let totaldiff = cmap[ct]["year"][yea]["quarter"][quarter]["time diff"]
+    //                 let diff = totaldiff / total
+    //                 let output = {"Call Type":ct, "Year": yea, "Quarter": quarter, "Total": total, "Time Diff":diff}
+    //                 smap.push(output)
+    //             }
+    //         }
+    //     }
+    // }
+    // return smap
 
 }
 
@@ -225,6 +264,7 @@ var drawBar = function(data,bmap){
 
     var plot = svg.select("g#plot");
 
+
     if (plot.size() < 1) {
         plot = svg.append("g")
             .attr("id", "plot");
@@ -248,6 +288,9 @@ var drawBar = function(data,bmap){
         plot.select("g#y-axis").call(yAxis);
     }
 
+
+    var tooltip = d3.select("body").append("div").attr("class", "toolTipBar");
+
     let bars = plot.selectAll("rect")
         .data(bmap.entries(), function(d) { return d.key; });
 
@@ -258,6 +301,43 @@ var drawBar = function(data,bmap){
         .attr("y", function(d) {return countScale(d.value);})
         .attr("height", function(d) {return plotHeight - countScale(d.value);})
         .style("fill", function (d) {return color(d.key)})
+        .on("mouseon", function(d){
+            tooltip.style("left", d3.event.pageX - 50 + "px")
+                .style("top", d3.event.pageY - 70 + "px")
+                .style("display", "inline-block")
+                .html((d.key) + "<br>" + (d.value));
+        })
+        .on("mousemove", function(d){
+            tooltip.style("left", d3.event.pageX - 50 + "px")
+                .style("top", d3.event.pageY - 70 + "px")
+                .style("display", "inline-block")
+                .text(d.key+": "+d.value)
+
+        })
+        .on("mouseout", function(d){ tooltip.style("display", "none")})
+        // .on('mouseover.hover', function(d){
+        //     let me = d3.select(this)
+        //     let div = d3.select("body").append("div");
+        //     div.attr("id", "details");
+        //     div.attr("class", "tooltip");
+        //
+        //     let rect = div.append("table")
+        //         .selectAll("tr")
+        //         .data(d)
+        //         .enter()
+        //         .append("tr");
+        //
+        //     rect.append("th").text(d.key)
+        //     rect.append("td").text(key=>d.value)
+        // })
+        // .on("mousemove.hover", function(d) {
+        //     let div = d3.select("div#details");
+        //     div.style("left", d3.event.pageX + 5 + "px")
+        //     div.style("top",  d3.event.pageY + 5 + "px");
+        // })
+        // // .on("mouseout.hover", function(d) {
+        // //     d3.selectAll("div#details").remove();
+        // // })
         .each(function(d, i, nodes) {
             // console.log("Added bar for:", d.key);
         });
@@ -287,13 +367,13 @@ var drawBar = function(data,bmap){
 
 }
 
-var drawPlot = function(data, cmap) {
+var drawPlot = function(data) {
 
     let margin = {
         top: 50,
         right: 45, // leave space for y-axis
         bottom: 90, // leave space for x-axis
-        left: 20
+        left: 200
     };
 
     let svg = d3.select("body").select("#vis_j");
@@ -302,24 +382,29 @@ var drawPlot = function(data, cmap) {
     let plotHeight = bounds.height - margin.top - margin.bottom;
 
     let countMin = 0;
-    let countMax = getMax(cmap);
+    let countMax = getMax(data);
 
     var color = d3.scaleOrdinal()
-        .domain(cmap.map(function(d){ return d[0];}))
+        .domain(data.map(function(d){
+            return d["Call Type"];
+        }))
         .range([
-            "E03426",
+            "FC719E",
             "F89217",
             "F8B620",
-            "FC719E"
+            "E03426"
         ]);
 
-    let timeMax = d3.max(cmap, function(d){
-        return d[4]
+    let timeMax = d3.max(data, function(d){
+        return d["Time Diff"]
     })
+    // let timeMax = 35;
+
     console.log(timeMax)
+
     var xScale = d3.scaleLinear()
         .domain([0, timeMax])
-        .range([0,plotWidth])
+        .range([0,plotWidth-margin.right])
         .nice();
 
     var yScale = d3.scaleLinear()
@@ -333,19 +418,18 @@ var drawPlot = function(data, cmap) {
 
     const g = svg.append("g").attr("id", "circles")
     g.selectAll("circle")
-        .data(cmap)
+        .data(data)
         .enter()
         .append("circle")
         .attr("cx", function(d) {
-            return xScale(d[4]);
+            return xScale(d["Time Diff"])+margin.right;
         })
         .attr("cy", function(d) {
-
-            return plotHeight - yScale(d[3]);
+            return margin.top+yScale(d["Total"]);
         })
         .attr("r", 5)
         .style("fill", function (d) {
-            return color(d[0])
+            return color(d["Call Type"])
     });
 
     svg.append("g").attr("id","annotation")
@@ -362,15 +446,7 @@ var drawPlot = function(data, cmap) {
         d3.select(this).style("stroke", null)
     })
 
-    // circles.on("mousedown", function (d) {
-    //     circles.filter(e=>(d[0] !== e[0])).transition().style("fill", "#bbbbbb");
-    // })
-    // svg.on("mouseup", function (d){
-    //     circles.transition().style("fill", d=> color(d[0]))
-    // })
-
     circles.on("mouseover.tool", function(d){
-        console.log()
         let me = d3.select(this);
         let div = d3.select("body").append("div")
 
@@ -379,27 +455,70 @@ var drawPlot = function(data, cmap) {
 
         let rows= div.append("table")
             .selectAll("tr")
-            .data(cmap)
+            .data(Object.keys(d))
             .enter()
             .append("tr")
 
-        rows.append("th").text(key=>d[0])
-        rows.append("td").text(key=>d[1])
+        rows.append("th").text(function (p,i) {
+            return p
+        })
+        rows.append("td").text(function(p,i){
+            return d[p]
+        })
     })
 
     circles.on("mousemove.tool", function(d) {
         let div = d3.select("div#details");
-
-        // get height of tooltip
-        let bbox = div.node().getBoundingClientRect();
-
-        div.style("left", d3.event.clientX + "px")
-        div.style("top",  (d3.event.clientY - bbox.height) + "px");
+        div.style("left", d3.event.pageX + 5 + "px")
+        div.style("top",  d3.event.pageY + 5 + "px");
     });
 
     circles.on("mouseout.tool", function(d) {
         d3.selectAll("div#details").remove();
     });
+
+    var leg = [
+        "Water Rescue",
+        "Structure Fire",
+        "Vehicle Fire",
+        "Outside Fire"
+        ]
+
+    var legend = svg.selectAll(".legend")
+        .data(leg).enter()
+        .append("g")
+        .attr("class","legend")
+        .attr("transform", "translate(" + 750 + "," + 80+ ")")
+
+    legend.append("rect")
+        .attr("x", 0)
+        .attr("y", function(d, i) {
+            return 20 * i;
+        })
+        .attr("width", 15)
+        .attr("height", 15)
+        .style("fill", function(d) {
+            return color(d)
+        });
+
+
+    legend.append("text")
+        .attr("x", 25)
+        .attr("text-anchor", "start")
+        .attr("dy", "1em")
+        .attr("y", function(d, i) { return 20 * i; })
+        .text(function(d) {
+            return d;
+        })
+        .attr("font-size", "12px");
+
+
+    legend.append("text")
+        .attr("x",31)
+        .attr("dy", "-.2em")
+        .attr("y",-10)
+        .text("Call Type")
+        .attr("font-size", "17px");
 
     //x axis
     svg.append("g")
@@ -433,13 +552,15 @@ var drawPlot = function(data, cmap) {
 
 }
 
-
+d3.csv("data/TimeDiff.csv",scatter).then(function(d){
+    drawPlot(d);
+})
 d3.csv("data/SF_Fire_2016_To_2018.csv", parser).then(function(d) {
     let getMap = groupByCall(d);
     let bMap = barMap(d);
-    let sMap = scatterMap(getMap);
 
-    drawPlot(d, sMap);
+
+
     drawBar(d, bMap);
 })
 
