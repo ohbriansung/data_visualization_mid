@@ -33,9 +33,16 @@ function barMap(d) {
         map[callType]["total"]++
         map[callType]["diff"] += diff
     }
-    return map
+    let bmap = d3.map()
+    for(let key in map){
+        if(!(bmap.has(key))){
+            let val = map[key]
+            let pdif = val["diff"]/val["total"]
+            bmap.set(key,pdif )
+        }
+    }
+    return bmap
 }
-
 
 function groupByCall(d){
     let map = {};
@@ -81,178 +88,6 @@ function groupByCall(d){
     return map
 }
 
-
-var drawBar = function(data,bmap){
-    let margin = {
-        top: 50,
-        right: 45, // leave space for y-axis
-        bottom: 80, // leave space for x-axis
-        left: 20
-    };
-
-    let svg = d3.select("body").select("#vis_j2");
-    let bounds = svg.node().getBoundingClientRect();
-    let plotWidth = bounds.width - margin.right - margin.left;
-    let plotHeight = bounds.height - margin.top - margin.bottom;
-
-    let countMin = 0;
-    let countMax = getbarmax(bmap)
-    console.log(countMax)
-
-    let countScale = d3.scaleLinear()
-        .domain([countMin, countMax])
-        .range([plotHeight,0])
-        .nice();
-
-    let callTypes = bmap.keys()
-
-    let callTypeScale = d3.scaleBand()
-        .domain(callTypes) // all letters (not using the count here)
-        .rangeRound([50, plotWidth])
-        .paddingInner(0.3);
-
-    var plot = svg.select("g#plot");
-
-    if (plot.size() < 1) {
-        plot = svg.append("g")
-            .attr("id", "plot");
-        plot.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    }
-
-    let xAxis = d3.axisBottom(callTypeScale);
-    let yAxis = d3.axisLeft(countScale).ticks(5).tickSize(-plotWidth+50);
-
-    if (plot.select("g#y-axis").size() < 1) {
-        let xGroup = plot.append("g").attr("id", "x-axis");
-
-        xGroup.call(xAxis);
-        xGroup.attr("transform", "translate(0," + plotHeight + ")");
-
-        let yGroup = plot.append("g").attr("id", "y-axis");
-        yGroup.call(yAxis);
-        yGroup.attr("transform", "translate(" + 45 + ",0)");
-
-    } else {
-        plot.select("g#y-axis").call(yAxis);
-    }
-
-    let bars = plot.selectAll("rect")
-        .data(count.entries(), function(d) { return d.key; });
-
-    bars.enter().append("rect")
-        .attr("class", "bar")
-        .attr("width", callTypeScale.bandwidth())
-        .attr("x", function(d) {
-            return callTypeScale(d.key);
-        })
-        .attr("y", function(d) {
-            return countScale(d.value);
-        })
-        .attr("height", function(d) {
-            return plotHeight - countScale(d.value);
-        })
-        .each(function(d, i, nodes) {
-            // console.log("Added bar for:", d.key);
-        });
-
-    bars.transition()
-        .attr("y", function(d) { return countScale(d.value); })
-        .attr("height", function(d) { return plotHeight - countScale(d.value); });
-
-    bars.exit()
-        .each(function(d, i, nodes) {
-            // console.log("Removing bar for:", d.key);
-        })
-        .transition()
-        .attr("y", function(d) { return countScale(countMin); })
-        .attr("height", function(d) { return plotHeight - countScale(countMin); })
-        .remove();
-
-    // var color = d3.scaleOrdinal()
-    //     .domain(bmap.map(function(d){ return d[0];}))
-    //     .range([
-    //         "E03426",
-    //         "F89217",
-    //         "F8B620",
-    //         "FC719E"
-    //     ]);
-}
-
-var drawPlot = function(data, cmap) {
-
-    let margin = {
-        top: 50,
-        right: 45, // leave space for y-axis
-        bottom: 80, // leave space for x-axis
-        left: 20
-    };
-
-    let svg = d3.select("body").select("#vis_j");
-    let bounds = svg.node().getBoundingClientRect();
-    let plotWidth = bounds.width - margin.right - margin.left;
-    let plotHeight = bounds.height - margin.top - margin.bottom;
-
-    let countMin = 0;
-    let countMax = getMax(cmap);
-
-    var color = d3.scaleOrdinal()
-        .domain(cmap.map(function(d){ return d[0];}))
-        .range([
-            "E03426",
-            "F89217",
-            "F8B620",
-            "FC719E"
-        ]);
-
-    let timeMax = d3.max(cmap, function(d){
-        return d[4]
-    })
-
-    console.log(timeMax)
-    var xScale = d3.scaleLinear()
-        .domain([0, timeMax])
-        .range([0,plotWidth])
-        .nice();
-
-    var yScale = d3.scaleLinear()
-        .domain([countMin,countMax])
-        .range([plotHeight, 0])
-        .nice();
-
-    var xAxis = d3.axisBottom().scale(xScale).ticks(5);
-
-    var yAxis = d3.axisLeft().scale(yScale).ticks(5);
-
-    svg.selectAll("circle")
-        .data(cmap)
-        .enter()
-        .append("circle")
-        .attr("cx", function(d) {
-            return xScale(d[4]);
-        })
-        .attr("cy", function(d) {
-
-            return plotHeight - yScale(d[3]);
-        })
-        .attr("r", 5)
-        .style("fill", function (d) {
-            return color(d[0])
-    });
-
-    //x axis
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + (plotHeight+margin.bottom) + ")")
-        .call(xAxis);
-
-    //y axis
-    svg.append("g")
-        .attr("class", "y axis")
-        .attr("transform", "translate(" +50 + ", 20)")
-        .call(yAxis);
-
-}
-
 function getbarmax(callmap){
     var max = 0;
     Object.values(callmap).forEach(function(arr){
@@ -282,6 +117,7 @@ function quarter_of_the_year(date) {
     var quarter = "Q"+qu.toString()
     return {year, quarter};
 }
+
 var parser = function(row,index){
     if (callType.includes(row["Call Type"])){
         if (row["On Scene DtTm"]) {
@@ -339,12 +175,230 @@ function scatterMap(cmap){
 
 }
 
-d3.csv("data/SF_Fire_2016_To_2018.csv", parser).then(function(d) {
-    // let getMap = groupByCall(d);
-    let bMap = barMap(d);
-    // let sMap = scatterMap(getMap);
+var drawBar = function(data,bmap){
+    let margin = {
+        top: 50,
+        right: 45, // leave space for y-axis
+        bottom: 80, // leave space for x-axis
+        left: 20
+    };
 
-    // drawPlot(d, sMap);
+    let svg = d3.select("body").select("#vis_j2");
+    let bounds = svg.node().getBoundingClientRect();
+    let plotWidth = bounds.width - margin.right - margin.left;
+    let plotHeight = bounds.height - margin.top - margin.bottom;
+
+    let countMin = 0;
+    let countMax = d3.max(bmap.values())
+
+    var color = d3.scaleOrdinal()
+        .domain(bmap.entries().map(function(d){
+            return d["key"];
+        }))
+        .range([
+            "E03426",
+            "FC719E",
+            "F89217",
+            "F8B620"
+        ]);
+
+    let countScale = d3.scaleLinear()
+        .domain([countMin, countMax])
+        .range([plotHeight,0])
+        .nice();
+
+    let callTypes = bmap.keys().sort();
+
+    let callTypeScale = d3.scaleBand()
+        .domain(callTypes) // all letters (not using the count here)
+        .rangeRound([50, plotWidth])
+        .paddingInner(0.3);
+
+    var plot = svg.select("g#plot");
+
+    if (plot.size() < 1) {
+        plot = svg.append("g")
+            .attr("id", "plot");
+        plot.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    }
+
+    let xAxis = d3.axisBottom(callTypeScale);
+    let yAxis = d3.axisLeft(countScale).ticks(5).tickSize(-plotWidth+50);
+
+    if (plot.select("g#y-axis").size() < 1) {
+        let xGroup = plot.append("g").attr("id", "x-axis");
+
+        xGroup.call(xAxis);
+        xGroup.attr("transform", "translate(0," + plotHeight + ")");
+
+        let yGroup = plot.append("g").attr("id", "y-axis");
+        yGroup.call(yAxis);
+        yGroup.attr("transform", "translate(" + 45 + ",0)");
+
+    } else {
+        plot.select("g#y-axis").call(yAxis);
+    }
+
+    let bars = plot.selectAll("rect")
+        .data(bmap.entries(), function(d) { return d.key; });
+
+    bars.enter().append("rect")
+        .attr("class", "bar")
+        .attr("width", callTypeScale.bandwidth())
+        .attr("x", function(d) {return callTypeScale(d.key);})
+        .attr("y", function(d) {return countScale(d.value);})
+        .attr("height", function(d) {return plotHeight - countScale(d.value);})
+        .style("fill", function (d) {return color(d.key)})
+        .each(function(d, i, nodes) {
+            // console.log("Added bar for:", d.key);
+        });
+
+    bars.transition()
+        .attr("y", function(d) { return countScale(d.value); })
+        .attr("height", function(d) { return plotHeight - countScale(d.value); });
+
+    bars.exit()
+        .each(function(d, i, nodes) {
+            // console.log("Removing bar for:", d.key);
+        })
+        .transition()
+        .attr("y", function(d) { return countScale(countMin); })
+        .attr("height", function(d) { return plotHeight - countScale(countMin); })
+        .remove();
+
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y",  10)
+        .attr("x",0 - (plotHeight / 2)-50)
+        .attr("dy", ".5em")
+        .style("text-anchor", "middle")
+        .style("font-size", "10pt")
+        .style("font-family", "'Roboto', sans-serif")
+        .text("Time Difference from Call Time to Arrive on Scene");
+
+}
+
+var drawPlot = function(data, cmap) {
+
+    let margin = {
+        top: 50,
+        right: 45, // leave space for y-axis
+        bottom: 90, // leave space for x-axis
+        left: 20
+    };
+
+    let svg = d3.select("body").select("#vis_j");
+    let bounds = svg.node().getBoundingClientRect();
+    let plotWidth = bounds.width - margin.right - margin.left;
+    let plotHeight = bounds.height - margin.top - margin.bottom;
+
+    let countMin = 0;
+    let countMax = getMax(cmap);
+
+    var color = d3.scaleOrdinal()
+        .domain(cmap.map(function(d){ return d[0];}))
+        .range([
+            "E03426",
+            "F89217",
+            "F8B620",
+            "FC719E"
+        ]);
+
+    let timeMax = d3.max(cmap, function(d){
+        return d[4]
+    })
+    console.log(timeMax)
+    var xScale = d3.scaleLinear()
+        .domain([0, timeMax])
+        .range([0,plotWidth])
+        .nice();
+
+    var yScale = d3.scaleLinear()
+        .domain([countMin,countMax])
+        .range([plotHeight, 0])
+        .nice();
+
+    var xAxis = d3.axisBottom().scale(xScale).ticks(5);
+
+    var yAxis = d3.axisLeft().scale(yScale).ticks(6).tickSize(-plotWidth+50);
+
+    const g = svg.append("g").attr("id", "circles")
+    g.selectAll("circle")
+        .data(cmap)
+        .enter()
+        .append("circle")
+        .attr("cx", function(d) {
+            return xScale(d[4]);
+        })
+        .attr("cy", function(d) {
+
+            return plotHeight - yScale(d[3]);
+        })
+        .attr("r", 5)
+        .style("fill", function (d) {
+            return color(d[0])
+    });
+
+    svg.append("g").attr("id","annotation")
+
+    let circles = d3.select("g#circles").selectAll("circle");
+    circles.on("mouseover.highlight", function(d){
+        d3.select(this)
+            .raise()
+            .style("stroke", "red")
+            .style("stroke-width", 2)
+    })
+
+    circles.on("mouseout.highlight", function(d){
+        d3.select(this).style("stroke", null)
+    })
+
+    circles.on("mousedown", function (d) {
+        circles.filter(e=>(d[0] !== e[0])).transition().style("fill", "#bbbbbb");
+    })
+    svg.on("mouseup", function (d){
+        circles.transition().style("fill", d=> color(d[0]))
+    })
+
+    //x axis
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate("+(margin.right+15)+"," + (plotHeight+margin.top) + ")")
+        .call(xAxis);
+
+    //y axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(" +(margin.right+15) + ", " +margin.top+")")
+        .call(yAxis);
+
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y",  10)
+        .attr("x",0 - (plotHeight / 2)-50)
+        .attr("dy", ".5em")
+        .style("text-anchor", "middle")
+        .style("font-size", "10pt")
+        .style("font-family", "'Roboto', sans-serif")
+        .text("Number of Records");
+
+    svg.append("text")
+        .attr("x", (plotWidth / 1.8))
+        .attr("y", (plotHeight+margin.bottom))
+        .attr("text-anchor", "middle")
+        .style("font-size", "14px")
+        .style("font-family", "'Roboto', sans-serif")
+        .text("Time Difference from Call Time to Arrive on Scene (Percent in min)");
+
+}
+
+
+d3.csv("data/SF_Fire_2016_To_2018.csv", parser).then(function(d) {
+    let getMap = groupByCall(d);
+    let bMap = barMap(d);
+    let sMap = scatterMap(getMap);
+
+    drawPlot(d, sMap);
     drawBar(d, bMap);
 })
 

@@ -81,6 +81,11 @@ text, .tooltip {
   padding-right: 5px;
 }
 
+.ticks {
+  stroke: #898989;
+  opacity: 0.7;
+}
+
 /*.hero-body, .hero-foot {
   background-color: #353535;
   /*  #ff5b5b * /
