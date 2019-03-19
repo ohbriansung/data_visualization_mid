@@ -5,12 +5,12 @@ const year = [
 ]
 
 const color = {
-    "Structure Fire": "FF9D9A",
-    "Vehicle Fire": "D37295",
-    "Water Rescue": "FABFD2",
-    "Outside Fire": "E15759",
-    "Explosion": "FFA600",
-    "Marine Fire": "FF7c43"
+    "Structure Fire": "#FF7c43",
+    "Vehicle Fire": "#D37295",
+    "Water Rescue": "#FFA600",
+    "Outside Fire": "#AF2116",
+    "Explosion": "#E15759",
+    "Marine Fire": "#FF9D9A"
 }
 
 const Q = [
