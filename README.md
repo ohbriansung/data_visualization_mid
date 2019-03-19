@@ -10,7 +10,7 @@
 
 ### Hosted with GitHub [here](https://usf-cs360-spring2019.github.io/midterm-the-data-vizards/index.html).
 
-## Project Theme
+## Project Theme: Fire
 
 We planned to present some interesting stories regarding **fire-related** incidents in San Francisco happened between 2016 and 2018 by using tools such as D3.js, Tableau and Vega-Lite. Furthermore, we decided that our color scheme should also fit the theme - red. The records provided by Fire Department in San Francisco contained 28,298 rows of data related to our project theme. We found interesting patterns with the geographical records such as Neighborhoods and Station Area. Moreover, we also found interesting time information with the dataset since we were provided the Call Date, Enter Datetime, Receive Datetime, Response Datetime, etc for each record. Other than that, there were records regarding whether there was medical support presented on scene.
 

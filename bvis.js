@@ -316,7 +316,7 @@ heatmap = function(map, top) {
   heats.on("mouseover.hover", function(d) {
     let div = d3.select("body").append("div");
     div.attr("id", "details");
-    div.attr("class", "tooltip");
+    div.attr("class", "toolTipBar");
 
     let table = div.append("table")
       .selectAll("tr")
@@ -608,7 +608,7 @@ pie = function(pieMap, topNeighborhood) {
   arcs.on("mouseover.hover2", function(d) {
     let div = d3.select("body").append("div");
     div.attr("id", "details");
-    div.attr("class", "tooltip");
+    div.attr("class", "toolTipBar");
 
     let table = div.append("table")
       .selectAll("tr")
