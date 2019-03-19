@@ -1,8 +1,12 @@
+.fire {
+  background-image: linear-gradient(to bottom right, #AF2116, #C63713, #E58824, #FFF83F);
+}
+
 #proto {
   display: none;
 }
 
-.tick line{
+.tick line {
   stroke: #898989;
   opacity: 0.3;
 }
