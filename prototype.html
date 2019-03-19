@@ -17,7 +17,11 @@
   <script src="https://cdn.jsdelivr.net/npm/vega@5.0.0-rc2/build/vega.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc13/build/vega-lite.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.29.1/build/vega-embed.js"></script>
-  <script src="data.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="slick/slick.min.js"></script>
+  <link rel="stylesheet" href="slick/slick.css"/>
+  <link rel="stylesheet" href="slick/slick-theme.css"/>
 </head>
 
 <!-- body -->
@@ -50,14 +54,14 @@
           </div>
 
           <div id="main-navbar" class="navbar-menu">
-            <a class="navbar-item is-active">
+            <a class="navbar-item" href="data.html">
               <span class="icon">
                 <i class="fas fa-table"></i>
               </span>
               <span>Data</span>
             </a>
 
-            <a class="navbar-item" href="prototype.html">
+            <a class="navbar-item is-active">
               <span class="icon">
                 <i class="fas fa-image"></i>
               </span>
@@ -91,79 +95,92 @@
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" id="prototype">
     <div class="container content">
-      <h3>Data and Processing</h3>
-      <p>
-        Data source: <a href="https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3" target="_blank">Fire Department Calls for Service, San Francisco</a> (Our dataset was downloaded on 02/18/2019)
-      </p>
 
-      <table class="table is-bordered is-striped is-narrow is-fullwidth">
-        <thead>
-          <tr>
-            <th style="width: 15ex">Attribution</th>
-            <th style="width: 12ex">Value</th>
-            <th>Sreenshot</th>
-          </tr>
-        </thead>
-        <tfoot>
-          <tr>
-            <td>Size</td>
-            <td>1.7 GB</td>
-            <td><img class="snip" src="img/data_size.png"></td>
-          </tr>
-          <tr>
-            <td>Rows</td>
-            <td>4,886,220</td>
-            <td><img class="snip" src="img/data_row_count.png"></td>
-          </tr>
-          <tr>
-            <td>Columns</td>
-            <td>34</td>
-            <td><img class="snip" src="img/data_column_count.png"></td>
-          </tr>
-          <tr>
-            <td>Data Types</td>
-            <td colspan="2">String, Number, Date, Datetime, Boolean, Location (Latitude and Longitude)</td>
-          </tr>
-        </tfoot>
-      </table>
+      <h2>Prototypes</h2>
 
-      <p>
-        Data Processing: (See <a href="https://github.com/usf-cs360-spring2019/midterm-the-data-vizards/tree/gh-pages/data" target="_blank">script source code</a>)<br>
-        1. Filtered "City" column with key word <b>San Francisco</b>.<br>
-        2. Filtered "Call Date" column to get the year from date string and removed data not in <b>2016</b> and <b>2018</b>.<br>
-        3. Filtered "Call Type Group" column with key word <b>Fire</b>.<br>
-        4. Removed unused columns such as "Call Number", "Unit ID", "Incident Number", "Location" and "RowID".<br>
-        5. Removed "City" and "Call Type Group" columns since we did filtering on those columns and they only remained the records of key words we've used.
-      </p>
+      <div class="fade">
+        <div><img src="img/frequency_of_fire_incidents_in_top_10_neighborhoods_per_weekday.png" class="prototypes"></div>
+        <div><img src="img/top_4_call_types_ratio_in_top_10_neighborhoods_with_without_paramedic_per_year.png" class="prototypes"></div>
+        <div><img src="img/scatterplot_Jordan.png" class="prototypes"></div>
+        <div><img src="img/bar_Jordan.png" class="prototypes"></div>
+      </div>
+
+      <script type="text/javascript">
+          $(document).ready(function(){
+              $('.fade').slick({
+                  dots: true,
+                  infinite: true,
+                  speed: 500,
+                  fade: true,
+                  cssEase: 'linear'
+              });
+          });
+      </script>
+
     </div>
   </section>
 
   <!-- separator between sections -->
   <hr class="container">
 
-  <section class="section">
+  <section class="section" id="prototype">
     <div class="container content">
-      <h3>Column Distribution Samples</h3>
 
-      <div class="container content">
-        <div id="vis5"></div>
-        <p>By Brian</p>
+      <h2>Outdated Prototypes</h2>
+
+      <div class="fade-outdated">
+        <div>
+          <img src="img/Incident Distribution of Top 10 Neighborhoods (Weekday).png" class="prototypes">
+
+          <br>
+          <h4>Comments</h4>
+
+          <p>
+            1. Good visualization.<br>
+            2. Remove Call Date label, it got confused with weekday.<br>
+            3. Sort the neighborhood by descending, higher count goes up.<br>
+            4. Hover weekday or neighborhood to brush.<br>
+            5. Hover show percentage.
+          </p>
+        </div>
+        <div>
+          <img src="img/jordan_speed.png" class="prototypes">
+
+          <br>
+          <h4>Comments</h4>
+
+          <p>
+            Jordan, please enter your comments here.
+          </p>
+        </div>
+        <div>
+          <div id="gproto"></div>
+
+          <br>
+          <h4>Comments</h4>
+
+          <p>
+            Gudbrand, please enter your comments here.
+          </p>
+        </div>
       </div>
 
-      <div class="container content">
-        <div id="vis1"></div>
-        <p>By Jordan</p>
-      </div>
+      <script type="text/javascript">
+          $(document).ready(function(){
+              $('.fade-outdated').slick({
+                  dots: true,
+                  infinite: true,
+                  speed: 500,
+                  fade: true,
+                  cssEase: 'linear'
+              });
+          });
+      </script>
 
-      <div class="container content">
-        <div id="vis3"></div>
-        <p>By Gudbrand</p>
-      </div>
     </div>
   </section>
-
 
   <!-- footer -->
   <footer class="footer">
@@ -184,9 +201,35 @@
   </footer>
 
   <script>
-    vegaEmbed('#vis5', proto5);
-    vegaEmbed('#vis1', proto1);
-    vegaEmbed('#vis3', proto3);
+    var gproto = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+      "width": 800,
+      "height": 440,
+      "data": {"url": "data/modified_data.csv"},
+      "mark": "line",
+      "title": "Distribution of Call Type and Neighborhoods",
+      "encoding": {
+        "x": {
+          "timeUnit": "month",
+          "field": "Call Date",
+          "type": "ordinal"
+        },
+        "y": {
+          "aggregate": "count",
+          "field": "Call Type Group",
+          "type": "quantitative"
+        },
+        "color": {
+          "field": "Neighborhooods - Analysis Boundaries",
+          "type": "nominal",
+          "legend": {"title": "Neighborhoods"}
+        }
+      }
+    };
+
+    vegaEmbed("#gproto", gproto);
   </script>
+
+<!-- end body and html -->
 </body>
 </html>

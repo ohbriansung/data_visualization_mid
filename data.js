@@ -1,7 +1,7 @@
 var proto1 = {
     "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
-    "width": 960,
-    "height": 500,
+    "width": 800,
+    "height": 440,
     "data": {"url": "data/jordan_data.csv"},
 
     "mark": "bar",
@@ -27,11 +27,11 @@ var proto1 = {
 
 var proto3 = {
     "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
-    "width": 960,
-    "height": 500,
+    "width": 800,
+    "height": 440,
     "data": {"url": "data/modified_data.csv"},
-    "mark": "line",
-    "title": "Distribution of Call Type and Neighborhoods",
+    "mark": "bar",
+    "title": "Distribution of Call Type, Month and Neighborhoods",
     "encoding": {
         "x": {
             "timeUnit": "month",
@@ -41,7 +41,7 @@ var proto3 = {
         "y": {
             "aggregate": "count",
             "field": "Call Type Group",
-            "type": "quantitative"
+            "type": "quantitative",
         },
         "color": {
             "field": "Neighborhooods - Analysis Boundaries",
@@ -54,8 +54,8 @@ var proto3 = {
 var proto5 = {
   "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
   "data": {"url": "data/response_time_per_weekday.csv"},
-  "width": 960,
-  "height": 500,
+  "width": 800,
+  "height": 440,
   "mark": "bar",
 
   "title": "Distribution of Response Time and Weekday",

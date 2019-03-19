@@ -13,10 +13,6 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/toggle.css">
-
-  <script src="https://cdn.jsdelivr.net/npm/vega@5.0.0-rc2/build/vega.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc13/build/vega-lite.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.29.1/build/vega-embed.js"></script>
 </head>
 
 <!-- body -->
@@ -56,6 +52,13 @@
               <span>Data</span>
             </a>
 
+            <a class="navbar-item" href="prototype.html">
+              <span class="icon">
+                <i class="fas fa-image"></i>
+              </span>
+              <span>Prototype</span>
+            </a>
+
             <a class="navbar-item" href="jvis.html">
               <span class="icon">
                 <i class="fas fa-chart-bar"></i>
@@ -69,14 +72,12 @@
               </span>
               <span>Brian's Visualization</span>
             </a>
-          </div>
 
-          <div class="navbar-end">
-            <a class="navbar-item" href="#prototype">
+            <a class="navbar-item is-active">
               <span class="icon">
-                <i class="fas fa-image"></i>
+                <i class="fas fa-chart-line"></i>
               </span>
-              <span>Prototype</span>
+              <span>Gudbrand's Visualization</span>
             </a>
           </div>
 
@@ -140,17 +141,6 @@
     </div>
   </section>
 
-  <!-- separator between sections -->
-  <hr class="container">
-
-  <section class="section" id="prototype">
-    <div class="container content">
-      <h2>Prototype</h2>
-
-      <div id="vis4"></div>
-    </div>
-  </section>
-
   <!-- footer -->
   <footer class="footer">
     <div class="content has-text-centered">
@@ -170,10 +160,5 @@
   </footer>
   <script src="https://d3js.org/d3.v5.min.js"></script>
   <script src="gvis.js"></script>
-
-  <script>
-     // vegaEmbed('#vis4', proto4);
-
-  </script>
 </body>
 </html>
