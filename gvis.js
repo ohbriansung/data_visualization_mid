@@ -1,8 +1,10 @@
 
 var lineOpacity = "0.75";
-var lineOpacityHover = "0.85";
-var otherLinesOpacityHover = "0.1";
-var lineStroke = "1px";
+var lineOpacityHover = "0.95";
+var otherLinesOpacityHover = "0.4";
+var lineOpacityFull = "1.0";
+
+var lineStroke = "1.25px";
 var lineStrokeHover = "2.5px";
 
 const gmonths = [
@@ -20,32 +22,34 @@ const gmonths = [
     "Des"
 ]
 const top10Neighborhood = {
-    "Bayview Hunters Point": "#f30e0b",
-    "Mission": "#ff649e",
-    "Financial District/South Beach": "#ff8d00",
-    "Tenderloin": "#ffb400",
-    "South of Market": "#000000",
-    "Outer Richmond": "#4dd37a",
-    "Sunset/Parkside": "#ba76d3",
-    "Lakeshore": "#00d3ca",
-    "Presidio": "#00d34a",
-    "Bernal Heights": "#0501d3",
+    "Outer Richmond": "#003f5c",
+    "Mission": "#2f4b7c",
+    "Financial District/South Beach": "#665191",
+    "Tenderloin": "#E15759",
+    "South of Market": "#FF9D9A",
+    "Bayview Hunters Point": "#FABFD2",
+    "Sunset/Parkside": "#D37295",
+    "Lakeshore": "#ff7c43",
+    "Presidio": "#ffa600",
+    "Bernal Heights": "#a05195",
 }
 
 
 
 
-
+translate = function(a, b) {
+    return "translate(" + a + ", " + b + ")";
+}
 // load data and trigger draw
 d3.csv(
     "data/SF_Fire_2016_To_2018.csv"
 )
     .then(function(d) {
-        // heatmap
         let map = countDay(d);
         let list = sortList(map);
         let top = getTop(list, 10);
         multiLineMap(map, top);
+        drawStackBar(map,top);
     })
 
 sortList = function(map) {
@@ -102,10 +106,10 @@ multiLineMap = function(map, top) {
     console.assert(svg.size() == 1);
 
     let margin = {
-        top:    60,
-        right:  15,
-        bottom: 90,
-        left:   60
+        top:    95,
+        right:  160,
+        bottom: 110,
+        left:   80
     };
 
     // now we can calculate how much space we have to plot
@@ -140,7 +144,6 @@ multiLineMap = function(map, top) {
 
     if (plot.size() < 1) {
         plot = svg.append("g").attr("id", "plot");
-
         plot.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     }
 
@@ -204,9 +207,9 @@ multiLineMap = function(map, top) {
 
 
 
-    myLines = svg.selectAll("path");
-
+    myLines = svg.selectAll("path.line");
     myDots = svg.selectAll("circle");
+
 
     let div = d3.select("body").append("div")
         .attr("class", "gtooltip")
@@ -276,6 +279,357 @@ multiLineMap = function(map, top) {
             .style("opacity", lineOpacity);
     });
 
+    y = 30;
+    for (var i in top10Neighborhood) {
+        svg.append("rect")
+            .attr("x", 810)
+            .attr("y", y)
+            .attr("width", 10)
+            .attr("height", 10)
+            .attr("class", "legend")
+            .attr("id", i) //TODO used in dots
+            .style("fill", top10Neighborhood[i]);
+        y += 15;
+    }
+    var y = 37;
+    for (var i in top10Neighborhood) {
+        svg.append("text")
+            .attr("x", 825)
+            .attr("y", y)
+            .attr("text-anchor", "right")
+            .style("font-size", "8px")
+            .text(i);
+        y += 15;
+    }
+    myLegend = svg.selectAll(".legend");
+
+    myLegend.on("mouseover.brush4", function(d) {
+        myLines.filter(e => (this.id !== e.neighborhood))
+            .transition()
+            .style("opacity", otherLinesOpacityHover);
+        myLines.filter(e => (this.id === e.neighborhood))
+            .raise()
+            .style("stroke-width", lineStrokeHover)
+            .style("opacity", lineOpacityHover);
+        svg.append("text")
+            .attr("class", "title-text")
+            .style("fill", top10Neighborhood[this.id])
+            .text(this.id)
+            .attr("text-anchor", "middle")
+            .attr("x", (plotWidth+margin.left+margin.right)/2)
+            .attr("y", 0 + margin.top);
+        myDots
+            .style("opacity", otherLinesOpacityHover)
+    });
 
 
+    myLegend.on("mouseout.brush4", function(d) {
+        d3.select(this)
+            .style("stroke-width", lineStroke)
+            .style("opacity", lineOpacity);
+
+        myLines
+            .transition()
+            .style("stroke", d =>
+                top10Neighborhood[d])
+            .style("stroke-width", lineStroke)
+            .style("opacity", lineOpacity);
+        svg.select(".title-text").remove();
+        myDots
+            .style("opacity", lineOpacity)
+    });
+
+
+    svg.append("text")
+        .attr("x", 810)
+        .attr("y", 20)
+        .attr("text-anchor", "left")
+        .style("font-size", "13px")
+        .text("Neighborhood");
+
+    // title
+    svg.append("text")
+        .attr("text-anchor", "start")
+        .attr("class", "title")
+        .attr("transform", "translate(15, 35)")
+        .text("Frequency of Fire Incidents in Top 10 Neighborhoods per month");
+
+    // create grid line
+    plot.append("line")
+        .attr("class", "grid-line")
+        .attr("x1", -margin.left + 15)
+        .attr("y1", -50)
+        .attr("x2", margin.left + plotWidth - 90)
+        .attr("y2", -50);
+
+    plot.append("line")
+        .attr("class", "grid-line")
+        .attr("x1", -margin.left + 12)
+        .attr("y1", plotHeight +40)
+        .attr("x2", margin.left + plotWidth - 60)
+        .attr("y2", plotHeight + 40);
+
+    // Y axis name
+    plot.append("text")
+        .attr("class", "legendText")
+        .attr("transform", "translate(-56, -29)")
+        .style("text-anchor", "start")
+        .text("Number of");
+
+    // Y axis name
+    plot.append("text")
+        .attr("class", "legendText")
+        .attr("transform", "translate(-45, -14)")
+        .style("text-anchor", "start")
+        .text("Records");
+
+    // caption
+    plot.append("text")
+        .attr("text-anchor", "start")
+        .attr("class", "captions")
+        .attr("dy", "0em")
+        .attr("transform", translate(-margin.left + 10, plotHeight + 55))
+        .text("Author: Gudbrand Schistad");
+
+
+    plot.append("text")
+        .attr("text-anchor", "start")
+        .attr("class", "captions")
+        .attr("dy", "1.2em")
+        .attr("transform", translate(-margin.left + 10, plotHeight + 55))
+        .text("The data is filtered on neighborhood's based on the number of records, which keeps 10 of 42 members. Each line represents a neighborhood");
+
+    plot.append("text")
+        .attr("text-anchor", "start")
+        .attr("class", "captions")
+        .attr("dy", "2.4em")
+        .attr("transform", translate(-margin.left + 10, plotHeight + 55))
+        .text("Call Types based on the number of records. You can observe that the number and the ratio of Outside Fire increased every year and took");
+
+    plot.append("text")
+        .attr("text-anchor", "start")
+        .attr("class", "captions")
+        .attr("dy", "3.6em")
+        .attr("transform", translate(-margin.left + 10, plotHeight + 55))
+        .text("most of the parts. Paramedic became more and more inportant for Outside Fire but not the other three.");
+
+}
+
+var drawStackBar = function(map, top) {
+
+    var margin = {
+        top:    100,
+        right:  160,
+        bottom: 120,
+        left:   60
+    };
+
+
+    var svg = d3.select("body").select("svg#vis_g2");
+    const bounds = svg.node().getBoundingClientRect();
+    const plotWidth = bounds.width - margin.right - margin.left;
+    const plotHeight = bounds.height - margin.top - margin.bottom;
+
+
+    var yScale = d3.scaleLinear()
+        .domain([0, 1800])
+        .range([plotHeight, 0])
+        .nice();
+
+    var xScale = d3.scaleBand()
+        .domain(gmonths)
+        .range([0, plotWidth])
+        .paddingInner(0.1);
+
+    var plot = svg.select("g#plot");
+
+    if (plot.size() < 1) {
+        plot = svg.append("g")
+            .attr("id", "plot")
+            .attr("height", "200")
+
+            .attr("transform", "translate("+ margin.left + ","+ margin.top + ")");
+    }
+
+    var xAxis = d3.axisBottom(xScale);
+    var yAxis = d3.axisLeft(yScale);
+
+    var xPos = plotHeight;
+
+    var stack = d3.stack()
+        .keys(top)
+        .order(d3.stackOrderNone)
+        .offset(d3.stackOffsetNone);
+
+    var colorScale = d3.scaleOrdinal()
+        .domain(top)
+        .range(d3.schemePaired);
+
+    var grid = d3.axisLeft(yScale)
+        .tickFormat("")
+        .tickSize(-plotHeight);
+
+
+
+
+
+    let stackMod = d3.map();
+    for (let i = 0; i < gmonths.length; i++) {
+        let curr = {};
+
+        for (let j = 0; j < top.length; j++) {
+            curr[top[j]] =  map[top[j]]["months"][gmonths[i]];
+        }
+
+        stackMod.set(i, curr,);
+    }
+
+    console.log(xScale(gmonths[1]))
+
+
+var series = stack(stackMod.values());
+    plot.selectAll("g.bar")
+        .data(series)
+        .enter()
+        .append("g")
+        .attr("class", "bar")
+        .each(function(d) {
+            d3.select(this)
+                .selectAll("rect")
+                .data(d)
+                .enter()
+                .append("rect")
+                .attr("id", d.key)
+                .attr("width", xScale.bandwidth()-20)
+                .attr("height", d => yScale(d[0]) - yScale(d[1]))
+                .attr("x", (d, i) =>  xScale(gmonths[stackMod.keys()[i]]) + 10 )
+                .attr("y", d => yScale(d[1]))
+                .style("fill", top10Neighborhood[d.key])
+                .attr("opacity", lineOpacity)
+
+        });
+
+
+    plot.append("g")
+        .attr("id", "x-axis")
+        .attr("transform", "translate("+ 0 +", " + xPos + ")")
+        .call(xAxis)
+        .selectAll("text")
+        .attr("y", 10)
+        .attr("x", 10)
+        .style("text-anchor", "end");
+
+    plot.append("g")
+        .attr("id", "y-axis")
+        .attr("transform", "translate(" + 0 + ", 0)")
+        .call(yAxis);
+
+    myBars = svg.selectAll(".bar rect");
+
+
+    myBars.on("mouseover.brush3", function(d) {
+        let me = d3.select(this);
+        me.transition().style("opacity", lineOpacityFull)
+        myBars.filter(e => (d !== e)).transition().style("opacity", otherLinesOpacityHover)
+        //TODO show data
+    });
+
+    myBars.on("mousemove.brush3", function(d) {
+        let me = d3.select(this);
+
+    });
+
+    myBars.on("mouseout.brush3", function(d) {
+        myBars.transition().style("opacity",lineOpacity);
+    });
+
+
+    y = 30;
+    for (var i in top10Neighborhood) {
+        svg.append("rect")
+            .attr("x", 810)
+            .attr("y", y)
+            .attr("width", 10)
+            .attr("height", 10)
+            .attr("class", "legend")
+            .attr("id", i) //TODO used in dots
+            .style("fill", top10Neighborhood[i]);
+        y += 15;
+    }
+    var y = 37;
+    for (var i in top10Neighborhood) {
+        svg.append("text")
+            .attr("x", 825)
+            .attr("y", y)
+            .attr("text-anchor", "right")
+            .style("font-size", "8px")
+            .text(i);
+        y += 15;
+    }
+
+    // title
+    svg.append("text")
+        .attr("text-anchor", "start")
+        .attr("class", "title")
+        .attr("transform", "translate(15, 35)")
+        .text("Frequency of Fire Incidents in Top 10 Neighborhoods per month");
+
+    // create grid line
+    plot.append("line")
+        .attr("class", "grid-line")
+        .attr("x1", -margin.left + 15)
+        .attr("y1", -50)
+        .attr("x2", margin.left + plotWidth - 60)
+        .attr("y2", -50);
+
+    plot.append("line")
+        .attr("class", "grid-line")
+        .attr("x1", -margin.left + 15)
+        .attr("y1", plotHeight + 40)
+        .attr("x2", margin.left + plotWidth - 60)
+        .attr("y2", plotHeight + 40);
+
+
+    // Y axis name
+    plot.append("text")
+        .attr("class", "legendText")
+        .attr("transform", "translate(-56, -29)")
+        .style("text-anchor", "start")
+        .text("Number of");
+
+    // Y axis name
+    plot.append("text")
+        .attr("class", "legendText")
+        .attr("transform", "translate(-45, -14)")
+        .style("text-anchor", "start")
+        .text("Records");
+    // caption
+    plot.append("text")
+        .attr("text-anchor", "start")
+        .attr("class", "captions")
+        .attr("dy", "0em")
+        .attr("transform", translate(-margin.left + 10, plotHeight + 55))
+        .text("Author: Gudbrand Schistad");
+
+
+    plot.append("text")
+        .attr("text-anchor", "start")
+        .attr("class", "captions")
+        .attr("dy", "1.2em")
+        .attr("transform", translate(-margin.left + 10, plotHeight + 55))
+        .text("The data is filtered on neighborhood's based on the number of records, which keeps 10 of 42 members. Each line represents a neighborhood");
+
+    plot.append("text")
+        .attr("text-anchor", "start")
+        .attr("class", "captions")
+        .attr("dy", "2.4em")
+        .attr("transform", translate(-margin.left + 10, plotHeight + 55))
+        .text("Call Types based on the number of records. You can observe that the number and the ratio of Outside Fire increased every year and took");
+
+    plot.append("text")
+        .attr("text-anchor", "start")
+        .attr("class", "captions")
+        .attr("dy", "3.6em")
+        .attr("transform", translate(-margin.left + 10, plotHeight + 55))
+        .text("most of the parts. Paramedic became more and more inportant for Outside Fire but not the other three.");
 }
