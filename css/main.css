@@ -2,6 +2,15 @@
   background-image: linear-gradient(to bottom right, #AF2116, #C63713, #E58824, #FFF83F);
 }
 
+.fire .title {
+  font-weight: bolder;
+}
+
+.fire .subtitle {
+  font-weight: bold;
+  color: #AAAAAA;
+}
+
 #proto {
   display: none;
 }
