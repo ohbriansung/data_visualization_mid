@@ -1,7 +1,7 @@
 
 var lineOpacity = "0.75";
 var lineOpacityHover = "0.95";
-var otherLinesOpacityHover = "0.4";
+var otherLinesOpacityHover = "0.2";
 var lineOpacityFull = "1.0";
 
 var lineStroke = "1.25px";
@@ -23,14 +23,14 @@ const gmonths = [
 ]
 const top10Neighborhood = {
     "Outer Richmond": "#003f5c",
-    "Mission": "#2f4b7c",
+    "Mission": "#ffa600",
     "Financial District/South Beach": "#665191",
-    "Tenderloin": "#E15759",
+    "Tenderloin": "#AF2116",
     "South of Market": "#FF9D9A",
-    "Bayview Hunters Point": "#FABFD2",
+    "Bayview Hunters Point": "#E15759",
     "Sunset/Parkside": "#D37295",
     "Lakeshore": "#ff7c43",
-    "Presidio": "#ffa600",
+    "Presidio": "#2f4b7c",
     "Bernal Heights": "#a05195",
 }
 
@@ -397,21 +397,21 @@ multiLineMap = function(map, top) {
         .attr("class", "captions")
         .attr("dy", "1.2em")
         .attr("transform", translate(-margin.left + 10, plotHeight + 55))
-        .text("The data is filtered on neighborhood's based on the number of records, which keeps 10 of 42 members. Each line represents a neighborhood");
+        .text("The data is filtered on 10 out of 42 neighborhoods with the highest total record count. Every line represents a neighborhood and has a unique ");
 
     plot.append("text")
         .attr("text-anchor", "start")
         .attr("class", "captions")
         .attr("dy", "2.4em")
         .attr("transform", translate(-margin.left + 10, plotHeight + 55))
-        .text("Call Types based on the number of records. You can observe that the number and the ratio of Outside Fire increased every year and took");
+        .text("color to easily differentiation between the lines. Each line marker represents the neighborhood record count for that month. ");
 
     plot.append("text")
         .attr("text-anchor", "start")
         .attr("class", "captions")
         .attr("dy", "3.6em")
         .attr("transform", translate(-margin.left + 10, plotHeight + 55))
-        .text("most of the parts. Paramedic became more and more inportant for Outside Fire but not the other three.");
+        .text("");
 
 }
 
@@ -525,22 +525,34 @@ var series = stack(stackMod.values());
         .call(yAxis);
 
     myBars = svg.selectAll(".bar rect");
+    var tooltip = d3.select("body").append("div").attr("class", "toolTipBar");
 
 
     myBars.on("mouseover.brush3", function(d) {
         let me = d3.select(this);
         me.transition().style("opacity", lineOpacityFull)
         myBars.filter(e => (d !== e)).transition().style("opacity", otherLinesOpacityHover)
-        //TODO show data
+
+        tooltip.style("left", d3.event.pageX - 50 + "px")
+            .style("top", d3.event.pageY - 70 + "px")
+            .style("display", "inline-block")
+            .html((this.id) + "<br>" + (d[1]-d[0]));
+
     });
 
     myBars.on("mousemove.brush3", function(d) {
         let me = d3.select(this);
+        tooltip.style("left", d3.event.pageX - 90 + "px")
+            .style("top", d3.event.pageY - 70 + "px")
+            .style("display", "inline-block")
+            .style("color", "white")
+            .text(this.id + ": " +(d[1]-d[0]))
 
     });
 
     myBars.on("mouseout.brush3", function(d) {
         myBars.transition().style("opacity",lineOpacity);
+        tooltip.style("display", "none")
     });
 
 
@@ -617,19 +629,19 @@ var series = stack(stackMod.values());
         .attr("class", "captions")
         .attr("dy", "1.2em")
         .attr("transform", translate(-margin.left + 10, plotHeight + 55))
-        .text("The data is filtered on neighborhood's based on the number of records, which keeps 10 of 42 members. Each line represents a neighborhood");
+        .text("Count of Number of Records for each Month. Color shows details about Neighborhooods. The view is filtered Neighborhooods,");
 
     plot.append("text")
         .attr("text-anchor", "start")
         .attr("class", "captions")
         .attr("dy", "2.4em")
         .attr("transform", translate(-margin.left + 10, plotHeight + 55))
-        .text("Call Types based on the number of records. You can observe that the number and the ratio of Outside Fire increased every year and took");
+        .text("which keeps the top 10 of 42 members based on the Neighborhooods total count of records. Each bar represents the toatal number of");
 
     plot.append("text")
         .attr("text-anchor", "start")
         .attr("class", "captions")
         .attr("dy", "3.6em")
         .attr("transform", translate(-margin.left + 10, plotHeight + 55))
-        .text("most of the parts. Paramedic became more and more inportant for Outside Fire but not the other three.");
+        .text("records for that month.");
 }
