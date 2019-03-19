@@ -135,7 +135,8 @@
         2. Filtered "Call Date" column to get the year from date string and removed data not in <b>2016</b> and <b>2018</b>.<br>
         3. Filtered "Call Type Group" column with key word <b>Fire</b>.<br>
         4. Removed unused columns such as "Call Number", "Unit ID", "Incident Number", "Location" and "RowID".<br>
-        5. Removed "City" and "Call Type Group" columns since we did filtering on those columns and they only remained the records of key words we've used.
+        5. Removed "City" and "Call Type Group" columns since we did filtering on those columns and they only remained the records of key words we've used.<br>
+        6. Aggregated a new column "Time Diff" using "Received DtTm" and "On Scene DtTm", grouped them by "Call Type", "Year", and "Quarter".
       </p>
     </div>
   </section>

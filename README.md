@@ -27,6 +27,7 @@ We planned to present some interesting stories regarding **fire-related** incide
 3. Filtered "Call Type Group" column with key word **Fire**.
 4. Removed unused columns such as "Call Number", "Unit ID", "Incident Number", "Location" and "RowID".
 5. Removed "City" and "Call Type Group" columns since we did filtering on those columns and they only remained the records of key words we've used.
+6. Aggregated a new column "Time Diff" using "Received DtTm" and "On Scene DtTm", grouped them by "Call Type", "Year", and "Quarter".
 
 \(See [script source code](https://github.com/usf-cs360-spring2019/midterm-the-data-vizards/tree/gh-pages/data)\)
 
