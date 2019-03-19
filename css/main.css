@@ -2,6 +2,11 @@
   display: none;
 }
 
+.tick line{
+  stroke: #898989;
+  opacity: 0.3;
+}
+
 .center{
   margin: auto;
   width: 60%;
@@ -87,11 +92,6 @@ text, .tooltip {
 
 .tooltip th {
   padding-right: 5px;
-}
-
-.tick line{
-  stroke: #898989;
-  opacity: 0.3;
 }
 
 .toolTipBar {
