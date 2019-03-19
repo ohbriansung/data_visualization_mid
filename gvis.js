@@ -297,6 +297,8 @@ multiLineMap = function(map, top) {
             .attr("x", 825)
             .attr("y", y)
             .attr("text-anchor", "right")
+            .attr("class", "legend-text")
+            .attr("id", i) //TODO used in dots
             .style("font-size", "8px")
             .text(i);
         y += 15;
@@ -338,6 +340,46 @@ multiLineMap = function(map, top) {
         myDots
             .style("opacity", lineOpacity)
     });
+
+    myLegendText = svg.selectAll(".legend-text");
+
+    myLegendText.on("mouseover.brush5", function(d) {
+        myLines.filter(e => (this.id !== e.neighborhood))
+            .transition()
+            .style("opacity", otherLinesOpacityHover);
+        myLines.filter(e => (this.id === e.neighborhood))
+            .raise()
+            .style("stroke-width", lineStrokeHover)
+            .style("opacity", lineOpacityHover);
+        svg.append("text")
+            .attr("class", "title-text")
+            .style("fill", top10Neighborhood[this.id])
+            .text(this.id)
+            .attr("text-anchor", "middle")
+            .attr("x", (plotWidth+margin.left+margin.right)/2)
+            .attr("y", 0 + margin.top);
+        myDots
+            .style("opacity", otherLinesOpacityHover)
+    });
+
+    myLegendText.on("mouseout.brush5", function(d) {
+        d3.select(this)
+            .style("stroke-width", lineStroke)
+            .style("opacity", lineOpacity);
+
+        myLines
+            .transition()
+            .style("stroke", d =>
+                top10Neighborhood[d])
+            .style("stroke-width", lineStroke)
+            .style("opacity", lineOpacity);
+        svg.select(".title-text").remove();
+        myDots
+            .style("opacity", lineOpacity)
+    });
+
+
+
 
 
     svg.append("text")
@@ -564,10 +606,11 @@ var series = stack(stackMod.values());
             .attr("width", 10)
             .attr("height", 10)
             .attr("class", "legend")
-            .attr("id", i) //TODO used in dots
+            .attr("id", i)
             .style("fill", top10Neighborhood[i]);
         y += 15;
     }
+
     var y = 37;
     for (var i in top10Neighborhood) {
         svg.append("text")
