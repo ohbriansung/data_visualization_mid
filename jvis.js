@@ -4,6 +4,15 @@ const year = [
     "2018"
 ]
 
+const color = {
+    "Structure Fire": "FF9D9A",
+    "Vehicle Fire": "D37295",
+    "Water Rescue": "FABFD2",
+    "Outside Fire": "E15759",
+    "Explosion": "FFA600",
+    "Marine Fire": "FF7c43"
+}
+
 const Q = [
     "Q1",
     "Q2",
@@ -178,7 +187,7 @@ function scatter(row, index){
         let out = {}
 
 
-        out["Call Type"] = row[Object.keys(row)[0]]
+        out["Call Type"] = row[Object.keys(row)[0]].replace(/[\x00-\x1F\x7F-\x9F]/g, "");
         out["Year"] = (row[Object.keys(row)[1]])
         out["Quarter"] = row[Object.keys(row)[2]]
         var timed = ""
@@ -190,35 +199,6 @@ function scatter(row, index){
 
         return out
     }
-
-
-    // for(let key in data.columns){
-    //     if(!(smap.has(key))){
-    //         let val = test[key]
-    //         // let val = map[key]
-    //         // let pdif = val["diff"]/val["total"]
-    //         bmap.set(key,val )
-    //     }
-    // }
-    // retu
-    // let keys = Object.keys(cmap)
-    // for(let key in keys){
-    //     let ct = keys[key]
-    //     if(ct !=="Marine Fire" && ct !=="Explosion") {
-    //         for (let ye in year) {
-    //             let yea = year[ye]
-    //             for (q in Q) {
-    //                 let quarter = Q[q]
-    //                 let total = cmap[ct]["year"][yea]["quarter"][quarter]["total"]
-    //                 let totaldiff = cmap[ct]["year"][yea]["quarter"][quarter]["time diff"]
-    //                 let diff = totaldiff / total
-    //                 let output = {"Call Type":ct, "Year": yea, "Quarter": quarter, "Total": total, "Time Diff":diff}
-    //                 smap.push(output)
-    //             }
-    //         }
-    //     }
-    // }
-    // return smap
 
 }
 
@@ -237,18 +217,6 @@ var drawBar = function(data,bmap){
 
     let countMin = 0;
     let countMax = d3.max(bmap.values())
-
-    var color = d3.scaleOrdinal()
-        .domain(bmap.entries().map(function(d){
-            return d["key"];
-        }))
-        .range([
-            "E377C2",
-            "EB6E49",
-            "E03426",
-            "F1CE63",
-            "F9A750"
-        ]);
 
     let countScale = d3.scaleLinear()
         .domain([countMin, countMax])
@@ -300,7 +268,9 @@ var drawBar = function(data,bmap){
         .attr("x", function(d) {return callTypeScale(d.key);})
         .attr("y", function(d) {return countScale(d.value);})
         .attr("height", function(d) {return plotHeight - countScale(d.value);})
-        .style("fill", function (d) {return color(d.key)})
+        .style("fill", function (d) {
+            return color[d.key]
+        })
         .on("mouseon.tool", function(d){
 
             tooltip.style("left", d3.event.pageX - 50 + "px")
@@ -323,13 +293,6 @@ var drawBar = function(data,bmap){
         .on("mouseleave", function (d, i) {
             d3.select(this).attr("opacity", "1")
         })
-        // .on("mouseon.highlight", function(d){
-        //     console.log(this)
-        //     d3.select(this).transition().style("fill", "red");
-        // })
-        // .on("mouseout.highlight", function(d){
-        //     d3.select(this).transition().style("fill", d=>color(d.key))
-        // })
 
         .each(function(d, i, nodes) {
             // console.log("Added bar for:", d.key);
@@ -414,17 +377,6 @@ var drawPlot = function(data) {
     let countMin = 0;
     let countMax = getMax(data);
 
-    var color = d3.scaleOrdinal()
-        .domain(data.map(function(d){
-            return d["Call Type"];
-        }))
-        .range([
-            "FC719E",
-            "F89217",
-            "F8B620",
-            "E03426"
-        ]);
-
     let timeMax = d3.max(data, function(d){
         return d["Time Diff"]
     })
@@ -459,7 +411,8 @@ var drawPlot = function(data) {
         })
         .attr("r", 5)
         .style("fill", function (d) {
-            return color(d["Call Type"])
+            let type = d["Call Type"]
+            return color[type]
     });
 
     svg.append("g").attr("id","annotation")
@@ -528,7 +481,7 @@ var drawPlot = function(data) {
         .attr("width", 15)
         .attr("height", 15)
         .style("fill", function(d) {
-            return color(d)
+            return color[d]
         });
 
 
