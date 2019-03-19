@@ -100,7 +100,7 @@
           </tr>
           <tr>
             <td>Rows</td>
-            <td>4886220</td>
+            <td>4,886,220</td>
             <td><img class="snip" src="img/data_row_count.png"></td>
           </tr>
           <tr>
@@ -117,8 +117,11 @@
 
       <p>
         Data Processing: (See <a href="https://github.com/usf-cs360-spring2019/midterm-the-data-vizards/tree/gh-pages/data" target="_blank">script source code</a>)<br>
-        1. Get records in San Francisco, 2018: Filtered "City" and "Call Date" columns to get records in "San Francisco" and "2018". Removed "Call Number", "Unit ID", "Incident Number", "Location" and "RowID" columns.<br>
-        2. Get response time: Parsed "Received DtTm" and "Response DtTm" into datetime in Python, and calculated the difference in second format.
+        1. Filtered "City" column with key word <b>San Francisco</b>.<br>
+        2. Filtered "Call Date" column to get the year from date string and removed data not in <b>2016</b> and <b>2018</b>.<br>
+        3. Filtered "Call Type Group" column with key word <b>Fire</b>.<br>
+        4. Removed unused columns such as "Call Number", "Unit ID", "Incident Number", "Location" and "RowID".<br>
+        5. Removed "City" and "Call Type Group" columns since we did filtering on those columns and they only remained the records of key words we've used.
       </p>
     </div>
   </section>
