@@ -23,15 +23,8 @@
   display: block;
   margin: auto;
   width: 960px;
-  height: 640px;
+  height: 500px;
   border: 1px solid black;
-}
-
-img.resize{
-  max-height:800px;
-  max-width:960px;
-  height:auto;
-  width:auto;
 }
 
 .vega-actions a {
@@ -84,15 +77,12 @@ text, .tooltip {
   pointer-events: none;
 }
 
-.toolTipBar {
+.gtooltip {
   position: absolute;
-  /*display: none;*/
-  min-width: 80px;
+  width: auto;
   height: auto;
-  background: none repeat scroll 0 0 #ffffff;
-  border: 1px solid #6F257F;
-  padding: 14px;
-  text-align: center;
+  padding: 8px;
+  pointer-events: none;
 }
 
 .tooltip th {

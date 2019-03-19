@@ -1,6 +1,9 @@
-const svg = d3.select("svg#vis_g");
-console.assert(svg.size() == 1);
 
+var lineOpacity = "0.75";
+var lineOpacityHover = "0.85";
+var otherLinesOpacityHover = "0.1";
+var lineStroke = "1px";
+var lineStrokeHover = "2.5px";
 
 const gmonths = [
     "Jan",
@@ -95,6 +98,8 @@ countDay = function(d) {
     return map;
 }
 multiLineMap = function(map, top) {
+    const svg = d3.select("svg#vis_g");
+    console.assert(svg.size() == 1);
 
     let margin = {
         top:    60,
@@ -117,9 +122,7 @@ multiLineMap = function(map, top) {
             max = Math.max(max, map[top[i]]["months"][gmonths[j]]);
         }
     }
-    console.log(max)
     let mid = (min + max) / 2 + 200;
-    min -= 0;
     let range = [min, mid, max];
 
 
@@ -144,23 +147,19 @@ multiLineMap = function(map, top) {
     var xAxis = d3.axisBottom(monthScale);
     var yAxis = d3.axisLeft(countScale);
 
-    var xPos = plotHeight - 300;
-    var yPos = plotWidth - 350;
-
 
     plot.append("g")
         .attr("id", "x-axis")
         .attr("transform", "translate(0, " + plotHeight + ")")
-        .data(top)
         .call(xAxis);
 
     plot.append("g")
         .attr("id", "y-axis")
-        .attr("transform", "translate(" + 0 + ", 0)")
+        .attr("transform", "translate(" + 0 + ", " + 0 + ")")
         .call(yAxis);
 
     var valueline = d3.line()
-        .x(function(d) { return monthScale(gmonths[d.key]); })
+        .x(function(d) { return monthScale(gmonths[d.key])+35; })
         .y(function(d) { return countScale(d.value); });
 
 
@@ -170,32 +169,112 @@ multiLineMap = function(map, top) {
         for (let j = 0; j < gmonths.length; j++) {
             let key = j;
             let value =  map[top[i]]["months"][gmonths[j]];
-            dataPoints.push({key,value});
+            dataPoints.push({key, value});
         }
-        console.log(top[i])
         plot.append("path")
             .attr("class", "line")
             .attr("d", valueline(dataPoints))
-            .data("gudbrand")
+            .data(function(d) {
+                return gmonths.map(
+                    function(p) {
+                        return {
+                            "neighborhood": top[i],
+                        };
+                    }
+                );
+            })
             .attr("stroke", top10Neighborhood[top[i]]) //TODO make function for name color her
-            .attr("stroke-width", 2)
+            .attr("stroke-width", lineStroke)
             .attr("fill", "none")
+            .attr("opacity", lineOpacity)
             .enter();
+
+        myDots = plot.selectAll("dot")
+            .data(dataPoints)
+            .enter()
+            .append("circle")
+            .style("fill", top10Neighborhood[top[i]])
+            .style("opacity", lineOpacity)
+            .attr("r", 3.5)
+            .attr("id", top[i])
+            .attr("cx", function(d) {
+                return monthScale(gmonths[d.key]) + 35})
+            .attr("cy", function(d) { return countScale(d.value);});
     }
 
 
 
     myLines = svg.selectAll("path");
 
-    myLines.on("mouseover.brushingArcs", function(d) {
-        console.log(d)
+    myDots = svg.selectAll("circle");
 
+    let div = d3.select("body").append("div")
+        .attr("class", "gtooltip")
+        .style("display", "none");
+
+    myLines.on("mouseover.brush1", function(d) {
+        let me = d3.select(this);
+        myLines.filter(e => (d !== e))
+            .transition()
+            .style("opacity", otherLinesOpacityHover);
+        me.raise()
+            .style("stroke-width", lineStrokeHover)
+            .style("opacity", lineOpacityHover);
+        svg.append("text")
+            .attr("class", "title-text")
+            .style("fill", top10Neighborhood[d.neighborhood])
+            .text(d.neighborhood)
+            .attr("text-anchor", "middle")
+            .attr("x", (plotWidth+margin.left+margin.right)/2)
+            .attr("y", 0 + margin.top);
+        myDots
+            .style("opacity", otherLinesOpacityHover)
+    });
+
+    myLines.on("mouseout.brush1", function(d) {
+        d3.select(this)
+            .style("stroke-width", lineStroke)
+            .style("opacity", lineOpacity);
+
+        myLines
+            .transition()
+            .style("stroke", d =>
+                top10Neighborhood[d])
+            .style("stroke-width", lineStroke)
+            .style("opacity", lineOpacity);
+        svg.select(".title-text").remove();
+        myDots
+            .style("opacity", lineOpacity)
     });
 
 
+    myDots.on("mouseover.brush2", function(d) {
+        div.style("display", "inline");
+        let me = d3.select(this);
+        me.raise()
+            .style("stroke-width", lineStrokeHover)
+            .style("r", 6)
+            .style("opacity", lineOpacityHover);
 
+    });
 
+    myDots.on("mousemove.brush2", function(d) {
+        let me = d3.select(this);
+        div
+            .text(d.value)
+            .style("left", (d3.event.pageX-10) + "px")
+            .style("top", (d3.event.pageY-40) + "px")
+            .style("color", top10Neighborhood[this.id]);
 
+    });
+
+    myDots.on("mouseout.brush2", function(d) {
+        div.style("display", "none");
+        myDots
+            .style("stroke-width", lineStroke)
+            .style("r", 3.5)
+            .style("opacity", lineOpacity);
+    });
 
 
 
