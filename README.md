@@ -1,7 +1,7 @@
 <h1>
   San Francisco Fire Department Calls for Service (2016 - 2018)
   <small>
-    <br/>
+    <br>
     The Data Vizards
   </small>
 </h1>
@@ -10,9 +10,9 @@
 
 ### Hosted with GitHub [here](https://usf-cs360-spring2019.github.io/midterm-the-data-vizards/index.html).
 
-## Porject Theme
+## Project Theme
 
-We planned to present some interesting stories regarding **fire-related** incidents in San Francisco happened between 2016 and 2018 by using tools such as D3.js, Tableau and Vega-Lite. The records provided by Fire Department in San Francisco contained 28,298 rows of data related to our project theme. We found interesting patterns with the geographical records such as Neighborhoods and Station Area. Moreover, we also found interesting time information with the dataset since we were provided the Call Date, Enter Datetime, Receive Datetime, Response Datetime, etc for each record. Other than that, there were records regarding whether there was medical support presented on scene.
+We planned to present some interesting stories regarding **fire-related** incidents in San Francisco happened between 2016 and 2018 by using tools such as D3.js, Tableau and Vega-Lite. Furthermore, we decided that our color scheme should also fit the theme - red. The records provided by Fire Department in San Francisco contained 28,298 rows of data related to our project theme. We found interesting patterns with the geographical records such as Neighborhoods and Station Area. Moreover, we also found interesting time information with the dataset since we were provided the Call Date, Enter Datetime, Receive Datetime, Response Datetime, etc for each record. Other than that, there were records regarding whether there was medical support presented on scene.
 
 ## Data Source
 
@@ -28,7 +28,7 @@ We planned to present some interesting stories regarding **fire-related** incide
 4. Removed unused columns such as "Call Number", "Unit ID", "Incident Number", "Location" and "RowID".
 5. Removed "City" and "Call Type Group" columns since we did filtering on those columns and they only remained the records of key words we've used.
 
-\(See [script soure code](https://github.com/usf-cs360-spring2019/midterm-the-data-vizards/tree/gh-pages/data)\)
+\(See [script source code](https://github.com/usf-cs360-spring2019/midterm-the-data-vizards/tree/gh-pages/data)\)
 
 ## The Vizards
 
