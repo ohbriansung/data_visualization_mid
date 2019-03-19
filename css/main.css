@@ -77,6 +77,14 @@ text, .tooltip {
   pointer-events: none;
 }
 
+.gtooltip {
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 8px;
+  pointer-events: none;
+}
+
 .tooltip th {
   padding-right: 5px;
 }
