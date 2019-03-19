@@ -313,13 +313,13 @@ var drawBar = function(data,bmap){
 
     svg.append("text")
         .attr("transform", "rotate(-90)")
-        .attr("y",  10)
-        .attr("x",0 - (plotHeight / 2)-50)
+        .attr("y",  20)
+        .attr("x",0 - (plotHeight / 2)-55)
         .attr("dy", ".5em")
         .style("text-anchor", "middle")
         .style("font-size", "10pt")
         .style("font-family", "'Roboto', sans-serif")
-        .text("Time Difference from Call Time to Arrive on Scene");
+        .text("Time Difference (Avg minutes)");
 
     svg.append("text")
         .attr("x", (margin.right+10))
@@ -531,7 +531,7 @@ var drawPlot = function(data) {
         .attr("text-anchor", "middle")
         .style("font-size", "14px")
         .style("font-family", "'Roboto', sans-serif")
-        .text("Time Difference from Call Time to Arrive on Scene (Percent in minutes)");
+        .text("Time Difference (Avg minutes)");
 
     svg.append("text")
         .attr("x", (margin.right+10))
@@ -540,7 +540,7 @@ var drawPlot = function(data) {
         .style("font-size", "28px")
         // .style("font-weight", "bold")
         .style("font-family", "'Roboto', sans-serif")
-        .text("Top 4 Fire Related Incidents Response Time per Quarter");
+        .text("Top 4 Incidents Response Time per Quarter");
 
     svg.append("text")
         .attr("x", (margin.right))
