@@ -124,6 +124,61 @@ text, .tooltip {
   box-shadow: 2px 2px 2px #000;
 }
 
+.parallax {
+  /* The image used */
+  background-image: url("../img/blaze.jpg");
+
+  /* Set a specific height */
+  min-height: 500px;
+
+  /* Create the parallax scrolling effect */
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.parallax2 {
+  /* The image used */
+  background-image: url("../img/firefighter.jpg");
+
+  /* Set a specific height */
+  min-height: 500px;
+
+  /* Create the parallax scrolling effect */
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.parallax3 {
+  /* The image used */
+  background-image: url("../img/firetruck.jpg");
+
+  /* Set a specific height */
+  min-height: 500px;
+
+  /* Create the parallax scrolling effect */
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+@font-face {
+  font-family: 'cheap-fire';
+  src: url('chp-fire.ttf');
+}
+
+.firefont{
+  font-family: 'cheap-fire';
+  color: white;
+  font-size: 64pt;
+  text-align: center;
+  position:relative;
+  top:200px
+}
+
 /*.hero-body, .hero-foot {
   background-color: #353535;
   /*  #ff5b5b * /
