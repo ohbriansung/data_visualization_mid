@@ -226,7 +226,7 @@ var drawBar = function(data,bmap){
     let margin = {
         top: 50,
         right: 45, // leave space for y-axis
-        bottom: 80, // leave space for x-axis
+        bottom: 100, // leave space for x-axis
         left: 20
     };
 
@@ -301,43 +301,36 @@ var drawBar = function(data,bmap){
         .attr("y", function(d) {return countScale(d.value);})
         .attr("height", function(d) {return plotHeight - countScale(d.value);})
         .style("fill", function (d) {return color(d.key)})
-        .on("mouseon", function(d){
+        .on("mouseon.tool", function(d){
+
             tooltip.style("left", d3.event.pageX - 50 + "px")
                 .style("top", d3.event.pageY - 70 + "px")
                 .style("display", "inline-block")
                 .html((d.key) + "<br>" + (d.value));
         })
-        .on("mousemove", function(d){
-            tooltip.style("left", d3.event.pageX - 50 + "px")
+        .on("mousemove.tool", function(d){
+            tooltip.style("left", d3.event.pageX - 90 + "px")
                 .style("top", d3.event.pageY - 70 + "px")
                 .style("display", "inline-block")
-                .text(d.key+": "+d.value)
+                .style("color", "white")
+                .text("Time Difference: " +d.value +"%" )
 
         })
-        .on("mouseout", function(d){ tooltip.style("display", "none")})
-        // .on('mouseover.hover', function(d){
-        //     let me = d3.select(this)
-        //     let div = d3.select("body").append("div");
-        //     div.attr("id", "details");
-        //     div.attr("class", "tooltip");
-        //
-        //     let rect = div.append("table")
-        //         .selectAll("tr")
-        //         .data(d)
-        //         .enter()
-        //         .append("tr");
-        //
-        //     rect.append("th").text(d.key)
-        //     rect.append("td").text(key=>d.value)
+        .on("mouseout.tool", function(d){ tooltip.style("display", "none")})
+        .on("mouseenter", function (d, i) {
+            d3.select(this).attr("opacity", "0.5")
+        })
+        .on("mouseleave", function (d, i) {
+            d3.select(this).attr("opacity", "1")
+        })
+        // .on("mouseon.highlight", function(d){
+        //     console.log(this)
+        //     d3.select(this).transition().style("fill", "red");
         // })
-        // .on("mousemove.hover", function(d) {
-        //     let div = d3.select("div#details");
-        //     div.style("left", d3.event.pageX + 5 + "px")
-        //     div.style("top",  d3.event.pageY + 5 + "px");
+        // .on("mouseout.highlight", function(d){
+        //     d3.select(this).transition().style("fill", d=>color(d.key))
         // })
-        // // .on("mouseout.hover", function(d) {
-        // //     d3.selectAll("div#details").remove();
-        // // })
+
         .each(function(d, i, nodes) {
             // console.log("Added bar for:", d.key);
         });
@@ -365,14 +358,51 @@ var drawBar = function(data,bmap){
         .style("font-family", "'Roboto', sans-serif")
         .text("Time Difference from Call Time to Arrive on Scene");
 
+    svg.append("text")
+        .attr("x", (margin.right+10))
+        .attr("y", (margin.top/2+5))
+        .attr("text-anchor", "start")
+        .style("font-size", "28px")
+        // .style("font-weight", "bold")
+        .style("font-family", "'Roboto', sans-serif")
+        .text("Response Time for Fire Related Incidents");
+
+    svg.append("text")
+        .attr("x", (margin.right))
+        .attr("y", (plotHeight+margin.bottom-0))
+        .attr("text-anchor", "start")
+        .style("font-size", "13px")
+        .style("font-family", "'Roboto', sans-serif")
+        .style("opacity",".7")
+        .text("By Jordan");
+
+    svg.append("text")
+        .attr("x", (margin.right))
+        .attr("y", (plotHeight+margin.bottom+15))
+        .attr("text-anchor", "start")
+        .style("font-size", "12px")
+        .style("font-family", "'Roboto', sans-serif")
+        .style("opacity",".7")
+        .text("Time Diff for each Call Type.  Color shows details about Call Type. The view is filtered on Call Type and Time Diff. The Call Type filter keeps Explosion, Marine Fire,");
+
+    svg.append("text")
+        .attr("x", (margin.right))
+        .attr("y", (plotHeight+margin.bottom+30))
+        .attr("text-anchor", "start")
+        .style("font-size", "12px")
+        .style("font-family", "'Roboto', sans-serif")
+        .style("opacity",".7")
+        .text("Outside Fire, Structure Fire and Vehicle Fire. The Time Diff filter keeps non-Null values only.");
+
+
 }
 
 var drawPlot = function(data) {
 
     let margin = {
-        top: 50,
+        top: 40,
         right: 45, // leave space for y-axis
-        bottom: 90, // leave space for x-axis
+        bottom: 110, // leave space for x-axis
         left: 200
     };
 
@@ -412,9 +442,9 @@ var drawPlot = function(data) {
         .range([plotHeight, 0])
         .nice();
 
-    var xAxis = d3.axisBottom().scale(xScale).ticks(5);
+    var xAxis = d3.axisBottom().scale(xScale).ticks(5).tickSize(-plotHeight);
 
-    var yAxis = d3.axisLeft().scale(yScale).ticks(6).tickSize(-plotWidth+50);
+    var yAxis = d3.axisLeft().scale(yScale).ticks(6).tickSize(-plotWidth+45);
 
     const g = svg.append("g").attr("id", "circles")
     g.selectAll("circle")
@@ -451,7 +481,7 @@ var drawPlot = function(data) {
         let div = d3.select("body").append("div")
 
         div.attr("id", "details");
-        div.attr("class","tooltip");
+        div.attr("class","toolTipBar");
 
         let rows= div.append("table")
             .selectAll("tr")
@@ -544,11 +574,57 @@ var drawPlot = function(data) {
 
     svg.append("text")
         .attr("x", (plotWidth / 1.8))
-        .attr("y", (plotHeight+margin.bottom))
+        .attr("y", (plotHeight+margin.top+30))
         .attr("text-anchor", "middle")
         .style("font-size", "14px")
         .style("font-family", "'Roboto', sans-serif")
-        .text("Time Difference from Call Time to Arrive on Scene (Percent in min)");
+        .text("Time Difference from Call Time to Arrive on Scene (Percent in minutes)");
+
+    svg.append("text")
+        .attr("x", (margin.right+10))
+        .attr("y", (margin.top/2+5))
+        .attr("text-anchor", "start")
+        .style("font-size", "28px")
+        // .style("font-weight", "bold")
+        .style("font-family", "'Roboto', sans-serif")
+        .text("Top 4 Fire Related Incidents Response Time per Quarter");
+
+    svg.append("text")
+        .attr("x", (margin.right))
+        .attr("y", (plotHeight+margin.bottom-25))
+        .attr("text-anchor", "start")
+        .style("font-size", "13px")
+        .style("font-family", "'Roboto', sans-serif")
+        .style("opacity",".7")
+        .text("By Jordan");
+
+    svg.append("text")
+        .attr("x", (margin.right))
+        .attr("y", (plotHeight+margin.bottom-5))
+        .attr("text-anchor", "start")
+        .style("font-size", "12px")
+        .style("font-family", "'Roboto', sans-serif")
+        .style("opacity",".7")
+        .text("Time Diff vs. sum of Number of Records.  Color shows details about Call Type.  Details are shown for Call Date Quarter.");
+
+    svg.append("text")
+        .attr("x", (margin.right))
+        .attr("y", (plotHeight+margin.bottom+15))
+        .attr("text-anchor", "start")
+        .style("font-size", "12px")
+        .style("font-family", "'Roboto', sans-serif")
+        .style("opacity",".7")
+        .text("The data is filtered on distinct count of On Scene DtTm, which keeps non-Null values only. The view is filtered on Call Type,");
+
+    svg.append("text")
+        .attr("x", (margin.right))
+        .attr("y", (plotHeight+margin.bottom+35))
+        .attr("text-anchor", "start")
+        .style("font-size", "12px")
+        .style("font-family", "'Roboto', sans-serif")
+        .style("opacity",".7")
+        .text("which keeps Outside Fire, Structure Fire, Vehicle Fire and Water Rescue.");
+
 
 }
 
@@ -558,8 +634,6 @@ d3.csv("data/TimeDiff.csv",scatter).then(function(d){
 d3.csv("data/SF_Fire_2016_To_2018.csv", parser).then(function(d) {
     let getMap = groupByCall(d);
     let bMap = barMap(d);
-
-
 
     drawBar(d, bMap);
 })
