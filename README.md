@@ -4,7 +4,10 @@
 
 ### Hosted with GitHub [here](https://ohbriansung.github.io/data_visualization_mid).
 
-![San Francisco Fire Department Calls for Service (2016 - 2018)](https://raw.githubusercontent.com/ohbriansung/data_visualization_mid/gh-pages/img/sf_fire_department_calls_for_service.png)
+![San Francisco Fire Department Calls for Service Heatmap](https://raw.githubusercontent.com/ohbriansung/data_visualization_mid/gh-pages/img/sf_fire_department_calls_for_service_heatmap.png)
+
+![San Francisco Fire Department Calls for Service Multi Pie Chart
+](https://raw.githubusercontent.com/ohbriansung/data_visualization_mid/gh-pages/img/sf_fire_department_calls_for_service_multipie.png)
 
 ## Project Theme: Fire
 
