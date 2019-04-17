@@ -2,7 +2,9 @@
 
 ## Website
 
-### Hosted with GitHub [here](https://usf-cs360-spring2019.github.io/midterm-the-data-vizards/index.html).
+### Hosted with GitHub [here](https://ohbriansung.github.io/data_visualization_mid).
+
+![San Francisco Fire Department Calls for Service (2016 - 2018)](https://raw.githubusercontent.com/ohbriansung/data_visualization_mid/gh-pages/img/sf_fire_department_calls_for_service.png)
 
 ## Project Theme: Fire
 
@@ -23,7 +25,7 @@ We planned to present some interesting stories regarding *fire-related* incident
 5. Removed "City" and "Call Type Group" columns since we did filtering on those columns and they only remained the records of key words we've used.
 6. Aggregated a new column "Time Diff" using "Received DtTm" and "On Scene DtTm", grouped them by "Call Type", "Year", and "Quarter".
 
-\(See [script source code](https://github.com/usf-cs360-spring2019/midterm-the-data-vizards/tree/gh-pages/data)\)
+\(See [script source code](https://github.com/ohbriansung/data_visualization_mid/tree/gh-pages/data)\)
 
 ## Author: The Data Vizards
 
@@ -33,7 +35,7 @@ We planned to present some interesting stories regarding *fire-related* incident
 
 ## Acknowledgment
 
-This projecr is for academic purposes only.
+This project is for academic purposes only.
 
 ## References
 0. [University of San Francisco](https://www.usfca.edu/)
