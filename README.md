@@ -1,8 +1,8 @@
 # San Francisco Fire Department Calls for Service (2016 - 2018)
 
-## Website
+### Website hosted with GitHub [here](https://ohbriansung.github.io/data_visualization_mid).
 
-### Hosted with GitHub [here](https://ohbriansung.github.io/data_visualization_mid).
+*The svg in the website might not work properly on mobiles*
 
 ![San Francisco Fire Department Calls for Service Heatmap](https://raw.githubusercontent.com/ohbriansung/data_visualization_mid/gh-pages/img/sf_fire_department_calls_for_service_heatmap.png)
 
